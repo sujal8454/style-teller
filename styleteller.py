@@ -1,0 +1,78 @@
+import streamlit as st
+from PIL import Image
+import requests
+from io import BytesIO
+
+
+def generate_ai_image(face_image, outfit_type, category):
+    url = f"https://placehold.co/600x800?text={outfit_type}+{category}"
+    response = requests.get(url)
+    return Image.open(BytesIO(response.content))
+
+USER_DB = {
+    "demo": "password123",
+    "alice": "stylequeen",
+    "bob": "fashionking"
+}
+
+def login():
+    pass
+
+def generate_ai_image(face_image, outfit_type, cat):
+    return None
+
+def wardrobe_app():
+    st.title("🧥 Style Teller Wardrobe")
+    st.markdown("Welcome to your AI-powered virtual wardrobe!")
+
+    with st.expander("📸 Upload Your Face"):
+        face_image = st.file_uploader("Upload a clear face image", type=["jpg", "png"])
+
+    body_type = st.selectbox("Choose Your Body Type", ["Slim", "Athletic", "Curvy", "Plus-size"])
+    gender = st.radio("Select Gender", ["Male", "Female", "Other"])
+    body_color = st.color_picker("Choose Your Skin Tone", "#f1c27d")
+    color_choice = st.text_input("Optional: Favorite color palette")
+    outfit_type = st.selectbox("Style Type", ["Formal", "Old Money", "College", "School", "Streetwear"])
+    occasion = st.text_input("Occasion (e.g., Party, Office, Casual)")
+
+    if st.button("Generate Outfits"):
+        if face_image:
+            st.success("Generating AI outfit suggestions...")
+            categories = ["Topwear", "Bottomwear", "Full Outfit", "Accessories"]
+            for cat in categories:
+                st.subheader(f"🧷 {cat}")
+                img = generate_ai_image(face_image, outfit_type, cat)
+                st.image(img, caption=f"{cat} Look", use_column_width=True)
+        else:
+            st.warning("Please upload your face photo.")
+
+
+def main():
+    st.set_page_config(page_title="Style Teller", layout="centered", page_icon="🧥")
+    bg_img = """
+    <style>
+    .stApp {
+        background-image: url('https://images.unsplash.com/photo-1602810318383-0e5b5c5f6b87');
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    </style>
+    """
+    st.markdown(bg_img, unsafe_allow_html=True)
+                
+    if "logged_in" not in st.session_state:
+        st.session_state["logged_in"] = False
+
+    if not st.session_state["logged_in"]:
+        login()
+    else:
+        wardrobe_app()
+
+main()
+echo "# style-teller" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/sujal8454/style-teller.git
+git push -u origin main
