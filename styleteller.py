@@ -69,7 +69,6 @@ def wardrobe_app():
         st.experimental_rerun()
 
 def main():
-    set_background()
     st.set_page_config(page_title="Style Teller", layout="centered", page_icon="🧥")
     bg_img = """
     <style>
