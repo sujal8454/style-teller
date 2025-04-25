@@ -3,7 +3,6 @@ from PIL import Image
 import requests
 from io import BytesIO
 
-
 def generate_ai_image(face_image, outfit_type, category):
     url = f"https://placehold.co/600x800?text={outfit_type}+{category}"
     response = requests.get(url)
@@ -16,10 +15,15 @@ USER_DB = {
 }
 
 def login():
-    pass
-
-def generate_ai_image(face_image, outfit_type, cat):
-    return None
+    st.title("Login to Style Teller")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    if st.button("Login"):
+        if username in USER_DB and USER_DB[username] == password:
+            st.success("Logged in successfully!")
+            st.session_state["logged_in"] = True
+        else:
+            st.error("Incorrect username or password.")
 
 def wardrobe_app():
     st.title("🧥 Style Teller Wardrobe")
@@ -46,7 +50,6 @@ def wardrobe_app():
         else:
             st.warning("Please upload your face photo.")
 
-
 def main():
     st.set_page_config(page_title="Style Teller", layout="centered", page_icon="🧥")
     bg_img = """
@@ -59,7 +62,7 @@ def main():
     </style>
     """
     st.markdown(bg_img, unsafe_allow_html=True)
-                
+
     if "logged_in" not in st.session_state:
         st.session_state["logged_in"] = False
 
@@ -68,6 +71,5 @@ def main():
     else:
         wardrobe_app()
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     main()
-
