@@ -8,22 +8,36 @@ def generate_ai_image(face_image, outfit_type, category):
     response = requests.get(url)
     return Image.open(BytesIO(response.content))
 
-USER_DB = {
-    "demo": "password123",
-    "alice": "stylequeen",
-    "bob": "fashionking"
-}
+if "USER_DB" not in st.session_state:
+    st.session_state.USER_DB = {
+        "demo": "password123",
+        "alice": "stylequeen",
+        "bob": "fashionking"
+    }
 
-def login():
-    st.title("Login to Style Teller")
+def login_signup():
+    st.title("Style Teller")
+
+    auth_mode = st.radio("Select an option", ["Login", "Sign Up"], horizontal=True)
+
     username = st.text_input("Username")
     password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        if username in USER_DB and USER_DB[username] == password:
-            st.success("Logged in successfully!")
-            st.session_state["logged_in"] = True
-        else:
-            st.error("Incorrect username or password.")
+
+    if auth_mode == "Login":
+        if st.button("Login"):
+            if username in st.session_state.USER_DB and st.session_state.USER_DB[username] == password:
+                st.success("Logged in successfully!")
+                st.session_state["logged_in"] = True
+                st.session_state["current_user"] = username
+            else:
+                st.error("Invalid username or password.")
+    else:
+        if st.button("Sign Up"):
+            if username in st.session_state.USER_DB:
+                st.error("Username already exists.")
+            else:
+                st.session_state.USER_DB[username] = password
+                st.success("Account created! You can now log in.")
 
 def wardrobe_app():
     st.title("🧥 Style Teller Wardrobe")
@@ -50,6 +64,10 @@ def wardrobe_app():
         else:
             st.warning("Please upload your face photo.")
 
+    if st.button("Logout"):
+        st.session_state["logged_in"] = False
+        st.experimental_rerun()
+
 def main():
     st.set_page_config(page_title="Style Teller", layout="centered", page_icon="🧥")
     bg_img = """
@@ -67,7 +85,7 @@ def main():
         st.session_state["logged_in"] = False
 
     if not st.session_state["logged_in"]:
-        login()
+        login_signup()
     else:
         wardrobe_app()
 
