@@ -4,7 +4,7 @@ import requests
 from io import BytesIO
 
 def generate_ai_image(face_image, outfit_type, category):
-    url = f"https://placehold.co/600x800?text={outfit_type}+{category}"
+    url = f"https://placehold.co/600x800.png?text={outfit_type}+{category}"
     response = requests.get(url)
     return Image.open(BytesIO(response.content))
 
