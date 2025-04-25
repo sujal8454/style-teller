@@ -69,11 +69,12 @@ def wardrobe_app():
         st.experimental_rerun()
 
 def main():
+    set_background()
     st.set_page_config(page_title="Style Teller", layout="centered", page_icon="🧥")
     bg_img = """
     <style>
     .stApp {
-        background-image: url('https://images.unsplash.com/photo-1602810318383-0e5b5c5f6b87');
+        background-image: url('https://i.postimg.cc/VkfS9X7d/temp-Imagegq-CSdo.avif);
         background-size: cover;
         background-attachment: fixed;
     }
