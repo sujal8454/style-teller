@@ -69,9 +69,3 @@ def main():
         wardrobe_app()
 
 main()
-git init
-git add README.md
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/sujal8454/style-teller.git
-git push -u origin main
