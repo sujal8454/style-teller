@@ -5,6 +5,7 @@ from io import BytesIO
 import json
 import os
 import time
+import base64
 
 def save_user_db():
     with open("user_db.json", "w") as f:
@@ -83,6 +84,7 @@ def header():
         <div class="logo">Style Teller</div>
         <div class="nav-links">
             <a href="javascript:void(0);" onclick="goToHome()" class="nav-link">Home</a>
+            <a href="javascript:void(0);" onclick="goToHelp()" class="nav-link">Help</a>
             <div class="dropdown">
                 <a href="javascript:void(0);" onclick="toggleDropdown()" class="nav-link">Account</a>
                 <div id="accountDropdown" class="dropdown-content">
@@ -101,6 +103,10 @@ def header():
     
     function goToHome() {
         window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'home'}, '*');
+    }
+    
+    function goToHelp() {
+        window.parent.postMessage({type: 'streamlit:setComponentValue', value: 'help'}, '*');
     }
     
     function goToProfile() {
@@ -132,20 +138,28 @@ def header():
     
     st.markdown(header_html, unsafe_allow_html=True)
     
-    nav_action = st.experimental_get_query_params().get("nav_action", [None])[0]
-    
-    if nav_action == "home":
-        st.session_state["page"] = "home"
-        st.experimental_rerun()
-    elif nav_action == "profile":
-        st.session_state["page"] = "profile"
-        st.experimental_rerun()
-    elif nav_action == "settings":
-        st.session_state["page"] = "settings"
-        st.experimental_rerun()
-    elif nav_action == "logout":
-        st.session_state["logged_in"] = False
-        st.experimental_rerun()
+    # Handle component value from JavaScript
+    if 'component_value' in st.session_state:
+        if st.session_state['component_value'] == 'home':
+            st.session_state["page"] = "home"
+            st.session_state['component_value'] = None
+            st.experimental_rerun()
+        elif st.session_state['component_value'] == 'profile':
+            st.session_state["page"] = "profile"
+            st.session_state['component_value'] = None
+            st.experimental_rerun()
+        elif st.session_state['component_value'] == 'settings':
+            st.session_state["page"] = "settings"
+            st.session_state['component_value'] = None
+            st.experimental_rerun()
+        elif st.session_state['component_value'] == 'help':
+            st.session_state["page"] = "help"
+            st.session_state['component_value'] = None
+            st.experimental_rerun()
+        elif st.session_state['component_value'] == 'logout':
+            st.session_state["logged_in"] = False
+            st.session_state['component_value'] = None
+            st.experimental_rerun()
 
 def login_signup():
     st.title("Style Teller")
@@ -175,6 +189,12 @@ def login_signup():
         background-color: #4CAF50 !important;
         color: white !important;
         font-weight: bold !important;
+    }
+    .text-with-bg {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -249,6 +269,12 @@ def home_screen():
         color: #FFFFFF !important;
         text-shadow: 1px 1px 2px #000000;
     }
+    .text-with-bg {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
+    }
     </style>
     """, unsafe_allow_html=True)
   
@@ -265,7 +291,7 @@ def home_screen():
             st.session_state["show_welcome"] = False
     
     st.title("🧥 Style Teller")
-    st.markdown(f"Welcome to your AI-powered virtual wardrobe, {user_name}!")
+    st.markdown(f"<div class='text-with-bg'>Welcome to your AI-powered virtual wardrobe, {user_name}!</div>", unsafe_allow_html=True)
     
     st.subheader("Featured Styles")
     col1, col2, col3 = st.columns(3)
@@ -289,11 +315,18 @@ def home_screen():
         st.image("https://placehold.co/300x400.png?text=Casual", use_column_width=True)
     
     st.subheader("Recent Outfits")
-    st.markdown("Create your first outfit to see it here!")
+    st.markdown("<div class='text-with-bg'>Create your first outfit to see it here!</div>", unsafe_allow_html=True)
     
-    if st.button("Create New Outfit"):
-        st.session_state["page"] = "wardrobe"
-        st.experimental_rerun()
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Create New Outfit"):
+            st.session_state["page"] = "wardrobe"
+            st.experimental_rerun()
+    with col2:
+        if st.button("Create Your Own Outfit"):
+            st.session_state["page"] = "wardrobe"
+            st.session_state["custom_outfit"] = True
+            st.experimental_rerun()
 
 def profile_screen():
     st.markdown("""
@@ -307,6 +340,12 @@ def profile_screen():
         color: #FFFFFF !important;
         text-shadow: 1px 1px 2px #000000;
     }
+    .text-with-bg {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -317,8 +356,8 @@ def profile_screen():
     user_name = user_email.split('@')[0]
 
     st.subheader("Account Information")
-    st.markdown(f"**Email:** {user_email}")
-    st.markdown(f"**User Name:** {user_name}")
+    st.markdown(f"<div class='text-with-bg'><strong>Email:</strong> {user_email}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='text-with-bg'><strong>User Name:</strong> {user_name}</div>", unsafe_allow_html=True)
     
     st.subheader("Profile Settings")
     new_name = st.text_input("Display Name", value=user_name)
@@ -327,7 +366,7 @@ def profile_screen():
         st.success("Profile updated successfully!")
     
     st.subheader("Your Style Preferences")
-    st.markdown("You haven't set any style preferences yet.")
+    st.markdown("<div class='text-with-bg'>You haven't set any style preferences yet.</div>", unsafe_allow_html=True)
     
     if st.button("Go to Home"):
         st.session_state["page"] = "home"
@@ -344,6 +383,12 @@ def settings_screen():
     h1, h2, h3, p {
         color: #FFFFFF !important;
         text-shadow: 1px 1px 2px #000000;
+    }
+    .text-with-bg {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -383,6 +428,88 @@ def settings_screen():
                 st.session_state["logged_in"] = False
                 st.experimental_rerun()
 
+def help_screen():
+    st.markdown("""
+    <style>
+    .stApp {
+        background-image: url('https://i.postimg.cc/VkfS9X7d/temp-Imagegq-CSdo.avif');
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    h1, h2, h3, p, li {
+        color: #FFFFFF !important;
+        text-shadow: 1px 1px 2px #000000;
+    }
+    .text-with-bg {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    header()
+    
+    st.title("Help & FAQ")
+    
+    st.subheader("How to Use Style Teller")
+    
+    with st.expander("Creating an Outfit", expanded=True):
+        st.markdown("""
+        <div class='text-with-bg'>
+        <p><strong>Step 1:</strong> Click on "Create New Outfit" from the home screen</p>
+        <p><strong>Step 2:</strong> Upload a clear photo of your face</p>
+        <p><strong>Step 3:</strong> Select your body type, skin tone, and style preferences</p>
+        <p><strong>Step 4:</strong> Click "Generate Outfits" to see AI recommendations</p>
+        <p><strong>Step 5:</strong> Save or download outfits you like</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with st.expander("Adding Your Own Items", expanded=False):
+        st.markdown("""
+        <div class='text-with-bg'>
+        <p>You can add your own clothing items to create custom outfits:</p>
+        <p><strong>1. Text Search:</strong> Search for items by description</p>
+        <p><strong>2. Photo Library:</strong> Upload photos from your device</p>
+        <p><strong>3. Camera:</strong> Take photos directly using your device camera</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with st.expander("Downloading Outfits", expanded=False):
+        st.markdown("""
+        <div class='text-with-bg'>
+        <p>To download an outfit:</p>
+        <p>1. Generate your desired outfit</p>
+        <p>2. Click the "Download" button under the outfit image</p>
+        <p>3. Choose your preferred image format</p>
+        <p>4. Save to your device</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.subheader("Frequently Asked Questions")
+    
+    with st.expander("Is my photo data secure?", expanded=False):
+        st.markdown("""
+        <div class='text-with-bg'>
+        All uploaded photos are processed securely and are not shared with third parties. 
+        Your privacy is our top priority.
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with st.expander("How accurate are the outfit recommendations?", expanded=False):
+        st.markdown("""
+        <div class='text-with-bg'>
+        Our AI system continuously learns and improves. The recommendations take into account 
+        your body type, skin tone, preferences, and current fashion trends to provide the most 
+        suitable options.
+        </div>
+        """, unsafe_allow_html=True)
+    
+    if st.button("Return to Home"):
+        st.session_state["page"] = "home"
+        st.experimental_rerun()
+
 def wardrobe_app():
     st.markdown("""
     <style>
@@ -404,9 +531,15 @@ def wardrobe_app():
         color: #FFFFFF !important;
         text-shadow: 1px 1px 2px #000000;
     }
-    .warning-header {
-        color: #FF0000 !important;
+    .instruction-header {
         font-weight: bold;
+        color: #4CAF50 !important;
+    }
+    .text-with-bg {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -416,13 +549,31 @@ def wardrobe_app():
     st.title("🧥 Create Your Outfit")
     
     with st.expander("📸 Upload Your Face", expanded=True):
-        st.markdown("<h3 class='warning-header'>WATCH OUT</h3>", unsafe_allow_html=True)
-        st.markdown("Upload a clear front-facing photo with your full face visible, eyes open, and no blurriness.")
+        st.markdown("<h3 class='instruction-header'>INSTRUCTIONS</h3>", unsafe_allow_html=True)
+        st.markdown("<div class='text-with-bg'>Upload a clear front-facing photo with your full face visible, eyes open, and no blurriness.</div>", unsafe_allow_html=True)
         
         face_image = st.file_uploader("Upload face image", type=["jpg", "png"])
         if face_image:
             img = Image.open(face_image)
             st.image(img, caption="Your uploaded image", width=200)
+    
+    # Add Your Own Items section
+    with st.expander("Add Your Own Items", expanded=True):
+        st.markdown("<div class='text-with-bg'>Add your own clothing items to create custom outfits</div>", unsafe_allow_html=True)
+        
+        add_items_tab1, add_items_tab2, add_items_tab3 = st.tabs(["Text Search", "Photo Library", "Camera"])
+        
+        with add_items_tab1:
+            st.text_input("Search for items", placeholder="e.g., blue jeans, white shirt")
+            if st.button("Search"):
+                st.info("Searching for items...")
+        
+        with add_items_tab2:
+            st.file_uploader("Upload clothing items", type=["jpg", "png"], accept_multiple_files=True)
+        
+        with add_items_tab3:
+            if st.camera_input("Take a photo of your clothing item"):
+                st.success("Photo captured successfully!")
 
     preset_style = st.session_state.get("preset_style", None)
     
@@ -443,6 +594,11 @@ def wardrobe_app():
     st.color_picker("Preview Skin Tone", body_color, disabled=True)
     
     color_choice = st.text_input("Optional: Favorite color palette")
+    
+    # Add age selection
+    age_range = st.selectbox("Age Range", [
+        "Under 18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+"
+    ])
 
     style_options = ["Formal", "Old Money", "Casual", "Business Casual"]
     outfit_type = st.selectbox("Style Type", style_options, 
@@ -453,14 +609,6 @@ def wardrobe_app():
         "Office", "Casual Outing", "Vacation", "Outdoor Event"
     ])
 
-    st.expander("More Options", expanded=False).markdown("""
-    - **Weather:** Select appropriate outfit for current weather
-    - **Budget Range:** Set your price range
-    - **Dress Code:** Specific requirements for the occasion
-    - **Fabric Preferences:** Any materials you prefer or want to avoid
-    - **Color Scheme:** Specific colors or themes
-    """)
-
     if st.button("Generate Outfits"):
         if face_image:
             # Set session state to show outfit screen
@@ -468,16 +616,26 @@ def wardrobe_app():
             st.session_state["outfit_data"] = {
                 "face_image": face_image,
                 "outfit_type": outfit_type,
-                "occasion": occasion
+                "occasion": occasion,
+                "age_range": age_range  # Add age range to the outfit data
             }
             st.experimental_rerun()
         else:
             st.warning("Please upload your face photo.")
 
+def get_binary_file_downloader_html(bin_file, file_label='File'):
+    """
+    Generate HTML code for a download link
+    """
+    bin_str = base64.b64encode(bin_file).decode()
+    href = f'<a href="data:application/octet-stream;base64,{bin_str}" download="{file_label}" class="download-btn">Download {file_label}</a>'
+    return href
+
 def outfit_results():
     face_image = st.session_state["outfit_data"]["face_image"]
     outfit_type = st.session_state["outfit_data"]["outfit_type"]
     occasion = st.session_state["outfit_data"]["occasion"]
+    age_range = st.session_state["outfit_data"].get("age_range", "25-34")  # Default age range if not provided
     
     st.markdown("""
     <style>
@@ -496,6 +654,22 @@ def outfit_results():
         padding: 10px;
         margin-bottom: 15px;
     }
+    .download-btn {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-weight: bold;
+    }
+    .text-with-bg {
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
+    }
     </style>
     """, unsafe_allow_html=True)
     
@@ -506,8 +680,33 @@ def outfit_results():
     st.success(f"Here are your {outfit_type} outfits for {occasion}")
     
     st.subheader("Virtual Try-On")
-    st.image("https://placehold.co/800x1000.png?text=AI+Generated+Face+With+Outfit", 
-            caption="AI-generated image of you in the outfit", use_column_width=True)
+    
+    # Generate outfit image
+    try_on_img = "https://placehold.co/800x1000.png?text=AI+Generated+Face+With+Outfit"
+    st.image(try_on_img, caption="AI-generated image of you in the outfit", use_column_width=True)
+    
+    # Create a BytesIO object to store the image for download
+    img_response = requests.get(try_on_img)
+    img_bytes = BytesIO(img_response.content)
+    
+    # Add download button
+    st.markdown("<div class='text-with-bg'>Download this outfit to your device</div>", unsafe_allow_html=True)
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button("Download as PNG"):
+            st.markdown(
+                get_binary_file_downloader_html(img_bytes.getvalue(), f"style_teller_outfit_{outfit_type}.png"),
+                unsafe_allow_html=True
+            )
+    with col2:
+        if st.button("Download as JPG"):
+            img = Image.open(img_bytes)
+            jpg_bytes = BytesIO()
+            img.convert('RGB').save(jpg_bytes, format='JPEG')
+            st.markdown(
+                get_binary_file_downloader_html(jpg_bytes.getvalue(), f"style_teller_outfit_{outfit_type}.jpg"),
+                unsafe_allow_html=True
+            )
     
     if st.button("Generate More Options"):
         st.info("Generating additional outfits...")
@@ -522,18 +721,18 @@ def outfit_results():
             with cols[i]:
                 img = generate_ai_image(face_image, outfit_type, f"{category}_{i+1}")
                 st.image(img, caption=f"Option {i+1}", use_column_width=True)
-                st.button(f"Save {category} {i+1}", key=f"save_{category}_{i}")
-   
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("Create New Outfit"):
-            st.session_state["page"] = "wardrobe"
-            st.experimental_rerun()
-    with col2:
-        if st.button("Go to Home"):
-            st.session_state["page"] = "home"
-            st.experimental_rerun()
-
+                col1, col2 = st.columns([1, 1])
+                with col1:
+                    st.button(f"Save {i+1}", key=f"save_{category}_{i}")
+                with col2:
+                    # Add download button for each item
+                    if st.button(f"Download {i+1}", key=f"download_{category}_{i}"):
+                        item_img_bytes = BytesIO()
+                        img.save(item_img_bytes, format='PNG')
+                        st.markdown(
+                            get_binary_file_downloader_html(item_img_bytes.getvalue(), f"{category}_option_{i+1}.png"),
+                            unsafe_allow_html=True
+                        )
 def main():
     st.set_page_config(page_title="Style Teller", layout="centered", page_icon="🧥")
     
