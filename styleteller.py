@@ -246,7 +246,7 @@ def login_signup():
          
                 st.session_state["show_welcome"] = True
                 st.session_state["welcome_time"] = time.time()
-               st.rerun()
+                st.rerun()
 
 def home_screen():
     st.markdown("""
