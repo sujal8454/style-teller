@@ -138,28 +138,27 @@ def header():
     
     st.markdown(header_html, unsafe_allow_html=True)
     
-    # Handle component value from JavaScript
     if 'component_value' in st.session_state:
         if st.session_state['component_value'] == 'home':
             st.session_state["page"] = "home"
             st.session_state['component_value'] = None
-            st.experimental_rerun()
+            st.rerun()
         elif st.session_state['component_value'] == 'profile':
             st.session_state["page"] = "profile"
             st.session_state['component_value'] = None
-            st.experimental_rerun()
+            st.rerun()
         elif st.session_state['component_value'] == 'settings':
             st.session_state["page"] = "settings"
             st.session_state['component_value'] = None
-            st.experimental_rerun()
+            st.rerun()
         elif st.session_state['component_value'] == 'help':
             st.session_state["page"] = "help"
             st.session_state['component_value'] = None
-            st.experimental_rerun()
+            st.rerun()
         elif st.session_state['component_value'] == 'logout':
             st.session_state["logged_in"] = False
             st.session_state['component_value'] = None
-            st.experimental_rerun()
+            st.rerun()
 
 def login_signup():
     st.title("Style Teller")
@@ -218,7 +217,8 @@ def login_signup():
              
                 st.session_state["show_welcome"] = True
                 st.session_state["welcome_time"] = time.time()
-                st.experimental_rerun()
+                st.rerun()
+
             else:
                 st.error("Invalid email or password.")
     else:
@@ -246,7 +246,7 @@ def login_signup():
          
                 st.session_state["show_welcome"] = True
                 st.session_state["welcome_time"] = time.time()
-                st.experimental_rerun()
+               st.rerun()
 
 def home_screen():
     st.markdown("""
@@ -299,19 +299,19 @@ def home_screen():
         if st.button("Formal", key="formal_btn"):
             st.session_state["page"] = "wardrobe"
             st.session_state["preset_style"] = "Formal"
-            st.experimental_rerun()
+            st.rerun()
         st.image("https://placehold.co/300x400.png?text=Formal", use_column_width=True)
     with col2:
         if st.button("Old Money", key="oldmoney_btn"):
             st.session_state["page"] = "wardrobe"
             st.session_state["preset_style"] = "Old Money"
-            st.experimental_rerun()
+            st.rerun()
         st.image("https://placehold.co/300x400.png?text=Old+Money", use_column_width=True)
     with col3:
         if st.button("Casual", key="casual_btn"):
             st.session_state["page"] = "wardrobe"
             st.session_state["preset_style"] = "Casual"
-            st.experimental_rerun()
+            st.rerun()
         st.image("https://placehold.co/300x400.png?text=Casual", use_column_width=True)
     
     st.subheader("Recent Outfits")
@@ -321,12 +321,12 @@ def home_screen():
     with col1:
         if st.button("Create New Outfit"):
             st.session_state["page"] = "wardrobe"
-            st.experimental_rerun()
+            st.rerun()
     with col2:
         if st.button("Create Your Own Outfit"):
             st.session_state["page"] = "wardrobe"
             st.session_state["custom_outfit"] = True
-            st.experimental_rerun()
+            st.rerun()
 
 def profile_screen():
     st.markdown("""
@@ -370,7 +370,7 @@ def profile_screen():
     
     if st.button("Go to Home"):
         st.session_state["page"] = "home"
-        st.experimental_rerun()
+        st.rerun()
 
 def settings_screen():
     st.markdown("""
@@ -416,7 +416,7 @@ def settings_screen():
         if "remembered_email" in st.session_state:
             del st.session_state["remembered_email"]
             del st.session_state["remembered_password"]
-        st.experimental_rerun()
+        st.rerun()
     
     if st.button("Delete Account", key="delete_account"):
         st.error("This will permanently delete your account and all your data.")
@@ -426,7 +426,7 @@ def settings_screen():
                 del st.session_state.USER_DB[email]
                 save_user_db()
                 st.session_state["logged_in"] = False
-                st.experimental_rerun()
+                st.rerun()
 
 def help_screen():
     st.markdown("""
@@ -508,7 +508,7 @@ def help_screen():
     
     if st.button("Return to Home"):
         st.session_state["page"] = "home"
-        st.experimental_rerun()
+        st.rerun()
 
 def wardrobe_app():
     st.markdown("""
@@ -619,7 +619,7 @@ def wardrobe_app():
                 "occasion": occasion,
                 "age_range": age_range  # Add age range to the outfit data
             }
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.warning("Please upload your face photo.")
 
