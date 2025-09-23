@@ -98,8 +98,6 @@ def welcome_animation():
     st.session_state['animation_done_signal'] = st.session_state.get('animation_done_signal', False)
     if st.session_state['animation_done_signal']:
         st.session_state['animation_done'] = True
-        st.session_state['animation_done_signal'] = False # Reset signal
-        st.rerun()
 
 
 # --- Database and File Handling Functions ---
