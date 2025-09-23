@@ -1179,13 +1179,6 @@ def main():
     """Main function to run the app."""
     st.set_page_config(page_title="Style Teller", layout="centered", page_icon="🧥")
 
-    # Initialize session state variables if they don't exist
-    if "animation_done" not in st.session_state:
-        st.session_state['animation_done'] = False
-        
-    if not st.session_state['animation_done']:
-        welcome_animation()
-        return # Stop execution until animation is done
 
     # Initialize session state for notification preference
     if 'notification_status' not in st.session_state:
