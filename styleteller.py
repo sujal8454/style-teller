@@ -139,7 +139,8 @@ def intro_video():
     # Use a button to proceed to the login page
     if st.button("Enter App"):
         st.session_state["video_played"] = True
-        st.experimental_rerun()
+        st.session_state["page"] = "login"
+        st.rerun() # Replaced st.experimental_rerun() with st.rerun()
 
 
 def login_signup():
@@ -159,8 +160,8 @@ def login_signup():
                     st.session_state["logged_in"] = True
                     st.session_state["current_user"] = email
                     st.success("Logged in successfully!")
-                    time.sleep(1)
-                    # Check onboarding status and redirect accordingly
+                    
+                    # Check onboarding status and set the next page
                     user_data = st.session_state.USER_DB.get(email, {})
                     user_details = user_data.get("details")
                     if not user_details:
@@ -171,14 +172,14 @@ def login_signup():
                         st.session_state["page"] = "upload_image"
                     else:
                         st.session_state["page"] = "home"
-
-                    st.experimental_rerun()
+                        st.session_state["show_notification"] = True # Set flag to show notification on home screen
+                    st.rerun() # Replaced st.experimental_rerun() with st.rerun()
                 else:
                     st.error("Invalid email or password.")
         with col2:
             if st.button("Sign Up", use_container_width=True):
                 st.session_state["page"] = "signup"
-                st.experimental_rerun()
+                st.rerun() # Replaced st.experimental_rerun() with st.rerun()
     elif st.session_state["page"] == "signup":
         with st.form("signup_form"):
             email = st.text_input("Email", key="signup_email")
@@ -196,7 +197,7 @@ def login_signup():
                     save_user_db()
                     st.success("Account created successfully! Please log in.")
                     st.session_state["page"] = "login"
-                    st.experimental_rerun()
+                    st.rerun() # Replaced st.experimental_rerun() with st.rerun()
 
     st.markdown("</div>", unsafe_allow_html=True)
     
@@ -217,7 +218,7 @@ def user_details_screen():
             save_user_db()
             st.session_state["details_provided"] = True
             st.session_state["page"] = "choose_style"
-            st.experimental_rerun()
+            st.rerun() # Replaced st.experimental_rerun() with st.rerun()
 
 def choose_style_screen():
     st.markdown("<h1 style='text-align: center;'>Choose Your Style</h1>", unsafe_allow_html=True)
@@ -236,7 +237,7 @@ def choose_style_screen():
             save_user_db()
             st.session_state["styles_chosen"] = True
             st.session_state["page"] = "upload_image"
-            st.experimental_rerun()
+            st.rerun() # Replaced st.experimental_rerun() with st.rerun()
         else:
             st.error("Please select at least 3 styles.")
             
@@ -251,7 +252,7 @@ def upload_image_screen():
         save_user_db()
         st.success("Image uploaded successfully!")
         st.session_state["page"] = "all_set"
-        st.experimental_rerun()
+        st.rerun() # Replaced st.experimental_rerun() with st.rerun()
 
 def all_set_screen():
     st.markdown("<h1 style='text-align: center;'>You Are All Set!</h1>", unsafe_allow_html=True)
@@ -259,7 +260,8 @@ def all_set_screen():
     if st.button("Start Exploring"):
         st.session_state["onboarding_complete"] = True
         st.session_state["page"] = "home"
-        st.experimental_rerun()
+        st.session_state["show_notification"] = True # Set flag to show notification on home screen
+        st.rerun() # Replaced st.experimental_rerun() with st.rerun()
 
 def header():
     """Generates the header with navigation options and user info."""
@@ -278,8 +280,11 @@ def header():
 
 def home_screen():
     st.title("Home")
-    st.info("Style Teller notification: Your new style recommendations are ready!")
     
+    if st.session_state.get("show_notification", False):
+        st.info("Style Teller notification: Your new style recommendations are ready!")
+        st.session_state["show_notification"] = False
+
     user_id = st.session_state["current_user"]
     user_details = st.session_state.USER_DB[user_id]["details"]
     st.markdown(f"Welcome, **{user_details['name']}**!")
@@ -296,7 +301,7 @@ def home_screen():
                 if st.button(style):
                     st.session_state["selected_style"] = style
                     st.session_state["page"] = "style_outfits"
-                    st.experimental_rerun()
+                    st.rerun() # Replaced st.experimental_rerun() with st.rerun()
     else:
         st.info("You haven't chosen any styles yet. Go to your profile to select some!")
 
@@ -372,7 +377,7 @@ def profile_screen():
 
         if st.button("Edit Profile"):
             st.session_state["page"] = "edit_profile"
-            st.experimental_rerun()
+            st.rerun() # Replaced st.experimental_rerun() with st.rerun()
     else:
         st.info("No profile details found. Please complete the onboarding process.")
 
@@ -402,7 +407,7 @@ def edit_profile_screen():
             save_user_db()
             st.success("Profile updated successfully!")
             st.session_state["page"] = "profile"
-            st.experimental_rerun()
+            st.rerun() # Replaced st.experimental_rerun() with st.rerun()
 
 def help_screen():
     st.title("Help")
@@ -414,7 +419,7 @@ def sign_out():
     st.session_state["page"] = "login"
     st.session_state["video_played"] = False
     st.session_state.clear()
-    st.experimental_rerun()
+    st.rerun() # Replaced st.experimental_rerun() with st.rerun()
 
 def footer():
     st.sidebar.markdown(
