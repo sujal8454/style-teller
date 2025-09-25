@@ -49,11 +49,11 @@ def set_styles():
         }
 
         .st-emotion-cache-12fmw6v, .st-emotion-cache-12fmw6v:hover, .st-emotion-cache-12fmw6v:active, .st-emotion-cache-12fmw6v:visited, .st-emotion-cache-12fmw6v:focus {
-            color: #A52A2A !important;
+            color: #000000 !important;
         }
         
         .st-emotion-cache-1fsy711 > div {
-            color: #A52A2A !important;
+            color: #000000 !important;
         }
 
         .st-emotion-cache-j93igk {
@@ -140,12 +140,12 @@ def intro_video():
     if st.button("Enter App"):
         st.session_state["video_played"] = True
         st.session_state["page"] = "login"
-        st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+        st.rerun()
 
 
 def login_signup():
     """Login and Signup screen."""
-    st.markdown("<h1 style='text-align: center; color: #A52A2A;'>Style Teller</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; color: #000000;'>Style Teller</h1>", unsafe_allow_html=True)
     
     st.markdown("<div class='st-emotion-cache-6o6vcr'>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center;'>Login or Sign Up</h2>", unsafe_allow_html=True)
@@ -173,13 +173,13 @@ def login_signup():
                     else:
                         st.session_state["page"] = "home"
                         st.session_state["show_notification"] = True # Set flag to show notification on home screen
-                    st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+                    st.rerun()
                 else:
                     st.error("Invalid email or password.")
         with col2:
             if st.button("Sign Up", use_container_width=True):
                 st.session_state["page"] = "signup"
-                st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+                st.rerun()
     elif st.session_state["page"] == "signup":
         with st.form("signup_form"):
             email = st.text_input("Email", key="signup_email")
@@ -197,7 +197,7 @@ def login_signup():
                     save_user_db()
                     st.success("Account created successfully! Please log in.")
                     st.session_state["page"] = "login"
-                    st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+                    st.rerun()
 
     st.markdown("</div>", unsafe_allow_html=True)
     
@@ -218,7 +218,7 @@ def user_details_screen():
             save_user_db()
             st.session_state["details_provided"] = True
             st.session_state["page"] = "choose_style"
-            st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+            st.rerun()
 
 def choose_style_screen():
     st.markdown("<h1 style='text-align: center;'>Choose Your Style</h1>", unsafe_allow_html=True)
@@ -237,7 +237,7 @@ def choose_style_screen():
             save_user_db()
             st.session_state["styles_chosen"] = True
             st.session_state["page"] = "upload_image"
-            st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+            st.rerun()
         else:
             st.error("Please select at least 3 styles.")
             
@@ -252,7 +252,7 @@ def upload_image_screen():
         save_user_db()
         st.success("Image uploaded successfully!")
         st.session_state["page"] = "all_set"
-        st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+        st.rerun()
 
 def all_set_screen():
     st.markdown("<h1 style='text-align: center;'>You Are All Set!</h1>", unsafe_allow_html=True)
@@ -261,13 +261,13 @@ def all_set_screen():
         st.session_state["onboarding_complete"] = True
         st.session_state["page"] = "home"
         st.session_state["show_notification"] = True # Set flag to show notification on home screen
-        st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+        st.rerun()
 
 def header():
     """Generates the header with navigation options and user info."""
     st.sidebar.markdown(
         "<div style='background-color: #f0f0f0; padding: 10px; border-radius: 10px;'>"
-        "<h2 style='text-align: center; color: #A52A2A;'>Style Teller</h2>"
+        "<h2 style='text-align: center; color: #000000;'>Style Teller</h2>"
         "<hr style='border: 1px solid #ccc;'>"
         "</div>",
         unsafe_allow_html=True
@@ -301,7 +301,7 @@ def home_screen():
                 if st.button(style):
                     st.session_state["selected_style"] = style
                     st.session_state["page"] = "style_outfits"
-                    st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+                    st.rerun()
     else:
         st.info("You haven't chosen any styles yet. Go to your profile to select some!")
 
@@ -377,7 +377,7 @@ def profile_screen():
 
         if st.button("Edit Profile"):
             st.session_state["page"] = "edit_profile"
-            st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+            st.rerun()
     else:
         st.info("No profile details found. Please complete the onboarding process.")
 
@@ -407,7 +407,7 @@ def edit_profile_screen():
             save_user_db()
             st.success("Profile updated successfully!")
             st.session_state["page"] = "profile"
-            st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+            st.rerun()
 
 def help_screen():
     st.title("Help")
@@ -419,7 +419,7 @@ def sign_out():
     st.session_state["page"] = "login"
     st.session_state["video_played"] = False
     st.session_state.clear()
-    st.rerun() # Replaced st.experimental_rerun() with st.rerun()
+    st.rerun()
 
 def footer():
     st.sidebar.markdown(
