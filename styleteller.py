@@ -158,9 +158,20 @@ def login_signup():
                 if email in st.session_state.USER_DB and st.session_state.USER_DB[email]["password"] == password:
                     st.session_state["logged_in"] = True
                     st.session_state["current_user"] = email
-                    st.session_state["page"] = "home"
                     st.success("Logged in successfully!")
                     time.sleep(1)
+                    # Check onboarding status and redirect accordingly
+                    user_data = st.session_state.USER_DB.get(email, {})
+                    user_details = user_data.get("details")
+                    if not user_details:
+                        st.session_state["page"] = "user_details"
+                    elif "styles" not in user_details or not user_details["styles"]:
+                        st.session_state["page"] = "choose_style"
+                    elif not user_details.get("image_uploaded", False):
+                        st.session_state["page"] = "upload_image"
+                    else:
+                        st.session_state["page"] = "home"
+
                     st.experimental_rerun()
                 else:
                     st.error("Invalid email or password.")
@@ -205,6 +216,7 @@ def user_details_screen():
             }
             save_user_db()
             st.session_state["details_provided"] = True
+            st.session_state["page"] = "choose_style"
             st.experimental_rerun()
 
 def choose_style_screen():
@@ -223,6 +235,7 @@ def choose_style_screen():
             st.session_state.USER_DB[st.session_state["current_user"]]["details"]["styles"] = selected_styles
             save_user_db()
             st.session_state["styles_chosen"] = True
+            st.session_state["page"] = "upload_image"
             st.experimental_rerun()
         else:
             st.error("Please select at least 3 styles.")
@@ -237,6 +250,7 @@ def upload_image_screen():
         st.session_state["image_uploaded"] = True
         save_user_db()
         st.success("Image uploaded successfully!")
+        st.session_state["page"] = "all_set"
         st.experimental_rerun()
 
 def all_set_screen():
@@ -441,61 +455,28 @@ def main():
     user_data = st.session_state.USER_DB.get(user_id, {})
     user_details = user_data.get("details")
 
-    # Check onboarding steps
-    if not user_details:
-        st.session_state["details_provided"] = False
-    else:
-        st.session_state["details_provided"] = True
-    
-    if user_details and "styles" not in user_details:
-        st.session_state["styles_chosen"] = False
-    else:
-        st.session_state["styles_chosen"] = True
-    
-    if user_details and not user_details.get("image_uploaded", False):
-        st.session_state["image_uploaded"] = False
-    else:
-        st.session_state["image_uploaded"] = True
-
-    if st.session_state["details_provided"] and st.session_state["styles_chosen"] and st.session_state["image_uploaded"]:
-        st.session_state["onboarding_complete"] = True
-    else:
-        st.session_state["onboarding_complete"] = False
-
-    if not st.session_state["details_provided"]:
-        st.session_state["page"] = "user_details"
+    # This part of the code determines the page to show based on the 'page' state variable.
+    # The login_signup function now sets this variable correctly.
+    if st.session_state["page"] == "user_details":
         user_details_screen()
-    elif not st.session_state["styles_chosen"]:
-        st.session_state["page"] = "choose_style"
+    elif st.session_state["page"] == "choose_style":
         choose_style_screen()
-    elif not st.session_state["image_uploaded"]:
-        st.session_state["page"] = "upload_image"
+    elif st.session_state["page"] == "upload_image":
         upload_image_screen()
-    elif not st.session_state["onboarding_complete"]:
-        st.session_state["page"] = "all_set"
+    elif st.session_state["page"] == "all_set":
         all_set_screen()
-    else:
-        # User is fully onboarded, navigate between main pages
-        if st.session_state["page"] == "home":
-            home_screen()
-        elif st.session_state["page"] == "wardrobe":
-            wardrobe_app()
-        elif st.session_state["page"] == "style_outfits":
-            show_avatar_outfits()
-        elif st.session_state["page"] == "profile":
-            profile_screen()
-        elif st.session_state["page"] == "edit_profile":
-            edit_profile_screen()
-        elif st.session_state["page"] == "help":
-            help_screen()
-        elif st.session_state["page"] == "user_details":
-            user_details_screen()
-        elif st.session_state["page"] == "choose_style":
-            choose_style_screen()
-        elif st.session_state["page"] == "upload_image":
-            upload_image_screen()
-        elif st.session_state["page"] == "all_set":
-            all_set_screen()
+    elif st.session_state["page"] == "home":
+        home_screen()
+    elif st.session_state["page"] == "wardrobe":
+        wardrobe_app()
+    elif st.session_state["page"] == "style_outfits":
+        show_avatar_outfits()
+    elif st.session_state["page"] == "profile":
+        profile_screen()
+    elif st.session_state["page"] == "edit_profile":
+        edit_profile_screen()
+    elif st.session_state["page"] == "help":
+        help_screen()
         
     footer()
 
