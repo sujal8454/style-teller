@@ -41,33 +41,49 @@ def load_remembered_user():
 # --- Custom Styling ---
 
 def set_styles():
-    """Sets the custom CSS for the app, including the new grey background and header text colors."""
+    """Sets the custom CSS for the app, ensuring text color adapts to its background."""
     st.markdown("""
         <style>
         .stApp {
             background-color: #f0f0f0;
         }
 
-        /* --- CRITICAL: FORCE ALL GENERAL TEXT TO BLACK FOR READABILITY --- */
-        /* Target common text elements and their containers */
-        div, span, p, a, label, h1, h2, h3, .stApp {
-            color: #000000 !important;
-        }
-
-        /* Target Streamlit-specific text/label classes */
+        /* 1. FORCE ALL GENERAL TEXT (Headings, Labels, Plain Text) TO BLACK FOR READABILITY (Req 1) */
+        /* This applies black to text on the light grey/white background areas */
+        div, span, p, a, label, h1, h2, h3, .stApp, 
         .st-emotion-cache-12fmw6v, 
         .st-emotion-cache-1fsy711 > div, 
         div[data-testid="stAppViewContainer"] * {
             color: #000000 !important;
         }
 
-        /* Re-allow white text on primary/dark buttons (Streamlit's default button text color) */
+        /* Alerts: Ensure text inside info/error/success boxes remains readable (often black on light colors) */
+        div[data-testid="stAlert"] * {
+            color: #000000 !important; 
+        }
+
+        /* 2. OVERRIDE: FORCE TEXT ON DARK BACKGROUNDS (Input Fields and Buttons) to WHITE (Req 2) */
+
+        /* Input Field Text: Ensure text typed into text, number, and password inputs is WHITE */
+        div[data-testid="stTextInput"] input, 
+        div[data-testid="stNumberInput"] input,
+        input[type="text"], 
+        input[type="password"] {
+            color: #ffffff !important; 
+        }
+        
+        /* Selectbox/Dropdown Display Text: Ensure selected option text is WHITE */
+        div[data-testid="stSelectbox"] div[data-baseweb="select"] input {
+             color: #ffffff !important;
+        }
+
+        /* Button Text: Ensure text on primary/dark buttons is WHITE */
         .st-emotion-cache-13srm2a .st-emotion-cache-7ym5gk {
-            /* This targets the button text, assuming the button background is dark */
             color: white !important; 
         }
 
-        /* --- END CRITICAL FIX --- */
+
+        /* --- Standard Layout CSS retained below --- */
 
 
         .st-emotion-cache-j93igk {
