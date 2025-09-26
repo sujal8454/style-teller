@@ -282,9 +282,10 @@ def all_set_screen():
 
 def header():
     """Generates the header with navigation options and user info."""
+    # FIX: Combined st.markdown calls into a single, valid HTML string for the sidebar.
     st.sidebar.markdown(
         "<div style='background-color: #f0f0f0; padding: 10px; border-radius: 10px;'>"
-        st.markdown("<h2 style='text-align: center; color: #000000 !important;'>Style Teller</h2>", unsafe_allow_html=True)
+        "<h2 style='text-align: center; color: #000000 !important;'>Style Teller</h2>" # Corrected the syntax error here.
         "<hr style='border: 1px solid #ccc;'>"
         "</div>",
         unsafe_allow_html=True
