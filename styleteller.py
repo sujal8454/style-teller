@@ -62,9 +62,7 @@ def set_styles():
             color: #000000 !important; 
         }
 
-        /* 2. OVERRIDE: FORCE TEXT ON DARK BACKGROUNDS (Input Fields and Buttons) to WHITE (Req 2) */
-
-        /* Input Field Text: Ensure text typed into text, number, and password inputs is WHITE */
+        /* Input Field Text: Ensure text typed into text, number, and password inputs is WHITE (Req 2) */
         div[data-testid="stTextInput"] input, 
         div[data-testid="stNumberInput"] input,
         input[type="text"], 
@@ -76,11 +74,16 @@ def set_styles():
         div[data-testid="stSelectbox"] div[data-baseweb="select"] input {
              color: #ffffff !important;
         }
-
-        /* Button Text: Ensure text on primary/dark buttons is WHITE */
-        .st-emotion-cache-13srm2a .st-emotion-cache-7ym5gk {
-            color: white !important; 
-        }
+        
+        /* FIX FOR BUTTON TEXT VISIBILITY (Requirement 1): 
+           All default/secondary buttons (light background) now use BLACK text due to the global rule above.
+           We remove the override that forced all button text white, which caused issues on light buttons.
+           Streamlit Primary buttons (dark background) will correctly default to WHITE text.
+        */
+        
+        /* Removed problematic rule: 
+        .st-emotion-cache-13srm2a .st-emotion-cache-7ym5gk { color: white !important; }
+        */
 
 
         /* --- Standard Layout CSS retained below --- */
@@ -162,13 +165,15 @@ def set_styles():
 # --- Page Functions ---
 
 def intro_video():
-    """Displays the intro video screen."""
-    # Retaining inline style as extra safety, though global CSS should handle it now.
+    """Displays the intro video screen and allows user to proceed."""
     st.markdown("<h1 style='text-align: center; color: #000000 !important;'>Welcome to Style Teller</h1>", unsafe_allow_html=True)
+    
+    # FIX for Requirement 2: Using the direct download link for robust embedding.
+    # We rely on the user clicking the button to proceed, as auto-redirect after video end is unreliable in Streamlit's architecture.
     st.video("https://drive.google.com/uc?export=download&id=1XOHOXx16C6Ajiz8vSpQ6ejLj-I-DYoyj", start_time=0)
     
-    # Use a button to proceed to the login page
-    if st.button("Enter App"):
+    # Use a button to proceed to the login page (Skip functionality)
+    if st.button("Skip Intro and Enter App"):
         st.session_state["video_played"] = True
         st.session_state["page"] = "login"
         st.rerun()
@@ -335,6 +340,7 @@ def home_screen():
         cols = style_buttons_container.columns(len(user_details["styles"]))
         for i, style in enumerate(user_details["styles"]):
             with cols[i]:
+                # All these style buttons are secondary/light and will now have BLACK text.
                 if st.button(style):
                     st.session_state["selected_style"] = style
                     st.session_state["page"] = "style_outfits"
@@ -413,6 +419,7 @@ def profile_screen():
         st.write(f"**Gender:** {user_details['gender']}")
         st.write(f"**Selected Styles:** {', '.join(user_details.get('styles', []))}")
 
+        # This button is secondary/light and will now have BLACK text.
         if st.button("Edit Profile"):
             st.session_state["page"] = "edit_profile"
             st.rerun()
@@ -483,6 +490,7 @@ def main():
     set_styles()
 
     if not st.session_state.get("video_played"):
+        # FIX for Requirement 2: Show intro video first
         intro_video()
         return
 
