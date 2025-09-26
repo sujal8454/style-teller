@@ -48,13 +48,27 @@ def set_styles():
             background-color: #f0f0f0;
         }
 
-        .st-emotion-cache-12fmw6v, .st-emotion-cache-12fmw6v:hover, .st-emotion-cache-12fmw6v:active, .st-emotion-cache-12fmw6v:visited, .st-emotion-cache-12fmw6v:focus {
+        /* --- CRITICAL: FORCE ALL GENERAL TEXT TO BLACK FOR READABILITY --- */
+        /* Target common text elements and their containers */
+        div, span, p, a, label, h1, h2, h3, .stApp {
             color: #000000 !important;
         }
-        
-        .st-emotion-cache-1fsy711 > div {
+
+        /* Target Streamlit-specific text/label classes */
+        .st-emotion-cache-12fmw6v, 
+        .st-emotion-cache-1fsy711 > div, 
+        div[data-testid="stAppViewContainer"] * {
             color: #000000 !important;
         }
+
+        /* Re-allow white text on primary/dark buttons (Streamlit's default button text color) */
+        .st-emotion-cache-13srm2a .st-emotion-cache-7ym5gk {
+            /* This targets the button text, assuming the button background is dark */
+            color: white !important; 
+        }
+
+        /* --- END CRITICAL FIX --- */
+
 
         .st-emotion-cache-j93igk {
             border-bottom: 2px solid #ccc;
@@ -133,7 +147,7 @@ def set_styles():
 
 def intro_video():
     """Displays the intro video screen."""
-    # Updated text color to black with !important
+    # Retaining inline style as extra safety, though global CSS should handle it now.
     st.markdown("<h1 style='text-align: center; color: #000000 !important;'>Welcome to Style Teller</h1>", unsafe_allow_html=True)
     st.video("https://drive.google.com/uc?export=download&id=1XOHOXx16C6Ajiz8vSpQ6ejLj-I-DYoyj", start_time=0)
     
@@ -146,14 +160,13 @@ def intro_video():
 
 def login_signup():
     """Login and Signup screen."""
-    # Updated text color to black with !important
     st.markdown("<h1 style='text-align: center; color: #000000 !important;'>Style Teller</h1>", unsafe_allow_html=True)
     
     st.markdown("<div class='st-emotion-cache-6o6vcr'>", unsafe_allow_html=True)
-    # Updated text color to black with !important
     st.markdown("<h2 style='text-align: center; color: #000000 !important;'>Login or Sign Up</h2>", unsafe_allow_html=True)
 
     if st.session_state["page"] == "login":
+        # Text inputs (Email, Password) labels are now fixed by the global CSS rule
         email = st.text_input("Email", key="login_email")
         password = st.text_input("Password", type="password", key="login_password")
         col1, col2 = st.columns(2)
@@ -205,7 +218,6 @@ def login_signup():
     st.markdown("</div>", unsafe_allow_html=True)
     
 def user_details_screen():
-    # Updated text color to black with !important
     st.markdown("<h1 style='text-align: center; color: #000000 !important;'>Tell Us About Yourself</h1>", unsafe_allow_html=True)
     with st.form("user_details_form"):
         name = st.text_input("Name")
@@ -225,8 +237,8 @@ def user_details_screen():
             st.rerun()
 
 def choose_style_screen():
-    # Updated text color to black with !important
     st.markdown("<h1 style='text-align: center; color: #000000 !important;'>Choose Your Style</h1>", unsafe_allow_html=True)
+    # The paragraph text is now fixed by the global CSS rule
     st.markdown("<p style='text-align: center;'>Select at least 3 styles that resonate with you.</p>", unsafe_allow_html=True)
     
     available_styles = [
@@ -247,7 +259,6 @@ def choose_style_screen():
             st.error("Please select at least 3 styles.")
             
 def upload_image_screen():
-    # Updated text color to black with !important
     st.markdown("<h1 style='text-align: center; color: #000000 !important;'>Upload Your Image</h1>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload an image of yourself", type=["jpg", "jpeg", "png"])
     
@@ -261,7 +272,6 @@ def upload_image_screen():
         st.rerun()
 
 def all_set_screen():
-    # Updated text color to black with !important
     st.markdown("<h1 style='text-align: center; color: #000000 !important;'>You Are All Set!</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'>Your profile is complete. You can now explore your personalized style journey.</p>", unsafe_allow_html=True)
     if st.button("Start Exploring"):
@@ -274,12 +284,12 @@ def header():
     """Generates the header with navigation options and user info."""
     st.sidebar.markdown(
         "<div style='background-color: #f0f0f0; padding: 10px; border-radius: 10px;'>"
-        # Updated text color to black with !important
-        "<h2 style='text-align: center; color: #000000 !important;'>Style Teller</h2>"
+        st.markdown("<h2 style='text-align: center; color: #000000 !important;'>Style Teller</h2>", unsafe_allow_html=True)
         "<hr style='border: 1px solid #ccc;'>"
         "</div>",
         unsafe_allow_html=True
     )
+    # The button text (Home, Own Wardrobe, etc.) is now handled by the global CSS
     st.sidebar.button("Home", on_click=lambda: st.session_state.update(page="home"))
     st.sidebar.button("Own Wardrobe", on_click=lambda: st.session_state.update(page="wardrobe"))
     st.sidebar.button("Account", on_click=lambda: st.session_state.update(page="profile"))
@@ -287,6 +297,7 @@ def header():
     st.sidebar.button("Sign Out", on_click=sign_out)
 
 def home_screen():
+    # "Home" text is now fixed by the global CSS
     st.title("Home")
     
     if st.session_state.get("show_notification", False):
@@ -295,9 +306,10 @@ def home_screen():
 
     user_id = st.session_state["current_user"]
     user_details = st.session_state.USER_DB[user_id]["details"]
+    # "Welcome, **Sujal Verma**!" (or equivalent) text is fixed by global CSS
     st.markdown(f"Welcome, **{user_details['name']}**!")
 
-    # Featured Styles section
+    # "Featured Styles" text is now fixed by the global CSS
     st.header("Featured Styles")
     
     # Check if the user has chosen styles
@@ -313,7 +325,7 @@ def home_screen():
     else:
         st.info("You haven't chosen any styles yet. Go to your profile to select some!")
 
-    # Create Your Own Outfit
+    # "Create Your Own Outfit" text is now fixed by the global CSS
     st.header("Create Your Own Outfit")
     st.button("Start Now", help="Click to create a custom outfit")
 
@@ -378,6 +390,7 @@ def profile_screen():
     
     if user_details:
         st.header("Profile Details")
+        # All st.write and st.markdown text is fixed by global CSS
         st.write(f"**Name:** {user_details['name']}")
         st.write(f"**Age:** {user_details['age']}")
         st.write(f"**Gender:** {user_details['gender']}")
