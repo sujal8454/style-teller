@@ -133,7 +133,8 @@ def set_styles():
 
 def intro_video():
     """Displays the intro video screen."""
-    st.markdown("<h1 style='text-align: center;'>Welcome to Style Teller</h1>", unsafe_allow_html=True)
+    # Updated text color to black
+    st.markdown("<h1 style='text-align: center; color: #000000;'>Welcome to Style Teller</h1>", unsafe_allow_html=True)
     st.video("https://drive.google.com/uc?export=download&id=1XOHOXx16C6Ajiz8vSpQ6ejLj-I-DYoyj", start_time=0)
     
     # Use a button to proceed to the login page
@@ -145,10 +146,12 @@ def intro_video():
 
 def login_signup():
     """Login and Signup screen."""
+    # Already black, keeping it for robustness
     st.markdown("<h1 style='text-align: center; color: #000000;'>Style Teller</h1>", unsafe_allow_html=True)
     
     st.markdown("<div class='st-emotion-cache-6o6vcr'>", unsafe_allow_html=True)
-    st.markdown("<h2 style='text-align: center;'>Login or Sign Up</h2>", unsafe_allow_html=True)
+    # Updated text color to black
+    st.markdown("<h2 style='text-align: center; color: #000000;'>Login or Sign Up</h2>", unsafe_allow_html=True)
 
     if st.session_state["page"] == "login":
         email = st.text_input("Email", key="login_email")
@@ -202,7 +205,8 @@ def login_signup():
     st.markdown("</div>", unsafe_allow_html=True)
     
 def user_details_screen():
-    st.markdown("<h1 style='text-align: center;'>Tell Us About Yourself</h1>", unsafe_allow_html=True)
+    # Updated text color to black
+    st.markdown("<h1 style='text-align: center; color: #000000;'>Tell Us About Yourself</h1>", unsafe_allow_html=True)
     with st.form("user_details_form"):
         name = st.text_input("Name")
         age = st.number_input("Age", min_value=1, max_value=150, value=30)
@@ -221,7 +225,8 @@ def user_details_screen():
             st.rerun()
 
 def choose_style_screen():
-    st.markdown("<h1 style='text-align: center;'>Choose Your Style</h1>", unsafe_allow_html=True)
+    # Updated text color to black
+    st.markdown("<h1 style='text-align: center; color: #000000;'>Choose Your Style</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'>Select at least 3 styles that resonate with you.</p>", unsafe_allow_html=True)
     
     available_styles = [
@@ -242,7 +247,8 @@ def choose_style_screen():
             st.error("Please select at least 3 styles.")
             
 def upload_image_screen():
-    st.markdown("<h1 style='text-align: center;'>Upload Your Image</h1>", unsafe_allow_html=True)
+    # Updated text color to black
+    st.markdown("<h1 style='text-align: center; color: #000000;'>Upload Your Image</h1>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload an image of yourself", type=["jpg", "jpeg", "png"])
     
     if uploaded_file:
@@ -255,7 +261,8 @@ def upload_image_screen():
         st.rerun()
 
 def all_set_screen():
-    st.markdown("<h1 style='text-align: center;'>You Are All Set!</h1>", unsafe_allow_html=True)
+    # Updated text color to black
+    st.markdown("<h1 style='text-align: center; color: #000000;'>You Are All Set!</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center;'>Your profile is complete. You can now explore your personalized style journey.</p>", unsafe_allow_html=True)
     if st.button("Start Exploring"):
         st.session_state["onboarding_complete"] = True
@@ -267,6 +274,7 @@ def header():
     """Generates the header with navigation options and user info."""
     st.sidebar.markdown(
         "<div style='background-color: #f0f0f0; padding: 10px; border-radius: 10px;'>"
+        # Already black, keeping it for robustness
         "<h2 style='text-align: center; color: #000000;'>Style Teller</h2>"
         "<hr style='border: 1px solid #ccc;'>"
         "</div>",
