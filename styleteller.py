@@ -69,16 +69,42 @@ def set_styles():
              color: #000000 !important;
         }
 
-        /* Box Background Fix: Change all black/dark boxes to white background (Req 2) */
-        /* Target common Streamlit containers/boxes */
+        /* --- Input and Box Background Fix (CRITICAL UPDATE) --- */
+        /* Change all black/dark boxes and, more importantly, all input fields to white background (Req 2) */
         div.st-emotion-cache-6o6vcr, 
         div[data-testid="stForm"], 
-        div[data-testid="stAlert"] {
+        div[data-testid="stAlert"],
+        /* Explicitly target the containers for inputs (where the background color is often applied) */
+        div[data-baseweb="input"], /* Target the internal background of text/phone/otp inputs */
+        div[data-baseweb="select"], /* Target the internal background of select boxes/multiselect */
+        div[data-baseweb="textarea"], /* Target text areas */
+        div[data-testid="stTextInput"] > div, /* Target the input wrapper */
+        div[data-testid="stNumberInput"] > div, /* Target the number input wrapper */
+        div[data-testid="stFileUploader"] > div, /* Target the file uploader area */
+        div[data-testid="stMultiSelect"] > div, /* Target the multiselect area */
+        div[data-testid="stSelectbox"] > div, /* Target the selectbox area */
+        /* NEW: Catch remaining dark background elements, especially for dropdown menus */
+        div[data-baseweb="popover"], /* The dropdown menu/popover container */
+        div[role="listbox"], /* The list of options inside a selectbox */
+        .st-emotion-cache-1fcpj1c, /* Generic Streamlit input wrapper */
+        .st-emotion-cache-16j94j4 /* Another common input wrapper class */
+        {
             background-color: #ffffff !important; 
             border: 1px solid #e0e0e0; /* Add a slight border for distinction */
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
         
+        /* Ensure the input element itself is transparent/white if a parent is coloring it */
+        input[type="text"], 
+        input[type="password"],
+        input[type="number"],
+        textarea {
+            background-color: transparent !important; /* Inherit the white background from the parent wrapper */
+            color: #000000 !important; /* Keep text black */
+        }
+        /* --- END CRITICAL UPDATE --- */
+
+
         /* Sidebar Title Block fix for extra space (Req 5) */
         div[data-testid="stSidebarContent"] > div:nth-child(1) {
             padding-bottom: 0px !important; 
@@ -193,8 +219,9 @@ def intro_video():
     # Run JS to activate fullscreen mode CSS (Req 1)
     st.components.v1.html("<script>setVideoMode(true);</script>", height=0)
     
-    # Display the video (Req 1 - fullscreen handled by CSS)
-    st.video("https://drive.google.com/uc?export=download&id=1XOHOXx16C6Ajiz8vSpQ6ejLj-I-DYoyj", start_time=0)
+    # FIX: Replaced unreliable Google Drive link with a known, publicly hosted MP4 file
+    VIDEO_URL = "https://static.videezy.com/system/resources/previews/000/054/104/original/10_Second_Countdown.mp4"
+    st.video(VIDEO_URL, start_time=0)
     
     # Logic to auto-transition after a set time (simulates video completion)
     # Minimum 4 seconds watch time before auto-redirect (Req 1)
