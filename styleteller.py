@@ -55,21 +55,41 @@ def set_styles():
         div[data-testid="stAppViewContainer"] * {
             color: #000000 !important;
         }
+        
+        /* --- EXCEPTION FOR DARK BACKGROUND UI ELEMENTS (Streamlit Sidebar/Top Menu) --- */
+        /* This overrides the global black text for elements that remain on a dark background */
+        div[data-testid="stSidebar"] *, /* All text in the dark sidebar */
+        .st-emotion-cache-zq5aqc, /* Class for Streamlit's header/top-right menu container */
+        .st-emotion-cache-9y213l, /* Class for 'Fork' link text */
+        .st-emotion-cache-1g6h684, /* Class for the 3-dot menu icon/text */
+        div[data-testid="stSidebarContent"] button, /* Button text inside the dark sidebar */
+        .st-emotion-cache-5rimss /* Another common button text/icon class in sidebar */
+        {
+            color: #ffffff !important; /* Force text to white on dark background */
+        }
+        
+        /* 1a. Ensure sidebar button backgrounds are transparent/dark so text is visible */
+        div[data-testid="stSidebarContent"] button {
+            background-color: transparent !important;
+            border: 1px solid #ffffff33 !important; /* Light border for visibility */
+        }
+        /* End of sidebar/dark element exceptions */
+
 
         /* --- CRITICAL INPUT FIELD OVERRIDE (FIX for Black Boxes) --- */
 
         /* Target the actual input element for text, number, and password fields */
         div[data-baseweb="input"] input,
         div[data-baseweb="input"] textarea,
-        div[data-baseweb="base-input"] input, /* New aggressive selector */
+        div[data-baseweb="base-input"] input, 
         input[type="text"], 
         input[type="password"],
         input[type="number"],
         textarea {
             background-color: #ffffff !important; /* Force the field itself to white */
             color: #000000 !important; /* Force text to black */
-            border: 1px solid #e0e0e0 !important; /* Optional: Add border to distinguish the box */
-            -webkit-appearance: none; /* Fix for mobile input styling */
+            border: 1px solid #e0e0e0 !important; 
+            -webkit-appearance: none; 
             appearance: none;
         }
         
@@ -86,12 +106,15 @@ def set_styles():
              color: #000000 !important;
         }
 
-        /* --- BUTTON STYLING OVERRIDE (FIX for Black Buttons) --- */
+        /* --- BUTTON STYLING OVERRIDE (FIX for Black Buttons/Boxes) --- */
 
         /* Target all common button containers, including primary and secondary */
-        div[data-testid*="stButton"] > button,
-        .st-emotion-cache-1v0bb6x, /* Common class for primary buttons */
-        .st-emotion-cache-7ym5gk /* Common class for standard buttons */
+        /* .st-emotion-cache-1v0bb6x is the class for the PRIMARY button (The "Start Now" button) */
+        /* Force Primary Button (Start Now) to white background / black text */
+        div[data-testid="stVerticalBlock"] .st-emotion-cache-1v0bb6x, 
+        .st-emotion-cache-1v0bb6x, /* Primary buttons (Start Now) */
+        .st-emotion-cache-7ym5gk, /* Standard/Secondary buttons (Style buttons, Login/Signup) */
+        div[data-testid*="stButton"] > button
         {
             background-color: #ffffff !important; /* White background */
             color: #000000 !important; /* Black text */
@@ -104,8 +127,8 @@ def set_styles():
         .st-emotion-cache-7ym5gk:hover,
         div[data-testid*="stButton"] > button:hover {
             color: #000000 !important; 
-            border: 1px solid #000000 !important; /* Darker border on hover */
-            background-color: #f0f0f0 !important; /* Slight grey on hover */
+            border: 1px solid #000000 !important; 
+            background-color: #f0f0f0 !important; 
         }
         
         /* --- General Dark Container Fixes (Forms, Alerts, etc.) --- */
