@@ -103,6 +103,27 @@ def set_styles():
             color: #000000 !important; /* Keep text black */
         }
         /* --- END CRITICAL UPDATE --- */
+        
+        /* --- Button Styling Fix (Explicitly White Background, Black Text) --- */
+        /* Target primary buttons (blue in default Streamlit) */
+        .st-emotion-cache-1v0bb6x { /* Common class for primary buttons */
+            background-color: #ffffff !important; /* White background */
+            color: #000000 !important; /* Black text */
+            border: 1px solid #000000 !important; /* Black border for distinction */
+        }
+        /* Target secondary/standard buttons */
+        .st-emotion-cache-7ym5gk { /* Common class for standard buttons */
+            background-color: #ffffff !important; /* White background */
+            color: #000000 !important; /* Black text */
+            border: 1px solid #ccc !important; /* Light border */
+        }
+        /* Ensure button text remains black on hover/active states if needed */
+        .st-emotion-cache-1v0bb6x:hover, .st-emotion-cache-7ym5gk:hover {
+            color: #000000 !important; 
+            border: 1px solid #000000 !important; /* Darker border on hover */
+            background-color: #f0f0f0 !important; /* Slight grey on hover */
+        }
+        /* --- END Button Styling Fix --- */
 
 
         /* Sidebar Title Block fix for extra space (Req 5) */
