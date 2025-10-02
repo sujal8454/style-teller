@@ -43,12 +43,12 @@ def set_styles():
     """Sets the custom CSS for the app, ensuring light background, black text, and fullscreen video."""
     st.markdown("""
         <style>
-        /* Global Background Fix: Ensure app background is white (Req 2) */
+        /* Global Background Fix: Ensure app background is white */
         .stApp {
             background-color: #ffffff; /* White background */
         }
         
-        /* 1. Ensure ALL text is BLACK for readability on white background (Req 2) */
+        /* 1. Ensure ALL text is BLACK for readability on white background */
         div, span, p, a, label, h1, h2, h3, h4, .stApp, 
         .st-emotion-cache-12fmw6v, 
         .st-emotion-cache-1fsy711 > div, 
@@ -56,34 +56,62 @@ def set_styles():
             color: #000000 !important;
         }
 
-        /* Input Field Text: Ensure text typed into text, number, and password inputs is BLACK (Req 2) */
-        div[data-testid="stTextInput"] input, 
-        div[data-testid="stNumberInput"] input,
+        /* --- CRITICAL INPUT FIELD OVERRIDE (FIX for Black Boxes) --- */
+
+        /* Target the actual input element for text, number, and password fields */
+        div[data-baseweb="input"] input,
+        div[data-baseweb="input"] textarea,
+        div[data-baseweb="base-input"] input, /* New aggressive selector */
         input[type="text"], 
-        input[type="password"] {
-            color: #000000 !important; /* Fixed: Black text on white background */
+        input[type="password"],
+        input[type="number"],
+        textarea {
+            background-color: #ffffff !important; /* Force the field itself to white */
+            color: #000000 !important; /* Force text to black */
+            border: 1px solid #e0e0e0 !important; /* Optional: Add border to distinguish the box */
+            -webkit-appearance: none; /* Fix for mobile input styling */
+            appearance: none;
         }
         
-        /* Selectbox/Dropdown Display Text: Ensure selected option text is BLACK (Req 2) */
+        /* Ensure the input container also respects the white theme */
+        div[data-testid="stTextInput"] > div > div, 
+        div[data-testid="stNumberInput"] > div > div,
+        div[data-testid="stSelectbox"] > div,
+        div[data-baseweb="input"] {
+            background-color: #ffffff !important;
+        }
+        
+        /* Selectbox/Dropdown Display Text: Ensure selected option text is BLACK */
         div[data-testid="stSelectbox"] div[data-baseweb="select"] input {
              color: #000000 !important;
         }
 
-        /* --- Input and Box Background Fix (CRITICAL UPDATE) --- */
-        /* Change all black/dark boxes and, more importantly, all input fields to white background (Req 2) */
+        /* --- BUTTON STYLING OVERRIDE (FIX for Black Buttons) --- */
+
+        /* Target all common button containers, including primary and secondary */
+        div[data-testid*="stButton"] > button,
+        .st-emotion-cache-1v0bb6x, /* Common class for primary buttons */
+        .st-emotion-cache-7ym5gk /* Common class for standard buttons */
+        {
+            background-color: #ffffff !important; /* White background */
+            color: #000000 !important; /* Black text */
+            border: 1px solid #000000 !important; /* Black border for distinction */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Ensure button text remains black on hover/active states if needed */
+        .st-emotion-cache-1v0bb6x:hover, 
+        .st-emotion-cache-7ym5gk:hover,
+        div[data-testid*="stButton"] > button:hover {
+            color: #000000 !important; 
+            border: 1px solid #000000 !important; /* Darker border on hover */
+            background-color: #f0f0f0 !important; /* Slight grey on hover */
+        }
+        
+        /* --- General Dark Container Fixes (Forms, Alerts, etc.) --- */
         div.st-emotion-cache-6o6vcr, 
         div[data-testid="stForm"], 
         div[data-testid="stAlert"],
-        /* Explicitly target the containers for inputs (where the background color is often applied) */
-        div[data-baseweb="input"], /* Target the internal background of text/phone/otp inputs */
-        div[data-baseweb="select"], /* Target the internal background of select boxes/multiselect */
-        div[data-baseweb="textarea"], /* Target text areas */
-        div[data-testid="stTextInput"] > div, /* Target the input wrapper */
-        div[data-testid="stNumberInput"] > div, /* Target the number input wrapper */
-        div[data-testid="stFileUploader"] > div, /* Target the file uploader area */
-        div[data-testid="stMultiSelect"] > div, /* Target the multiselect area */
-        div[data-testid="stSelectbox"] > div, /* Target the selectbox area */
-        /* NEW: Catch remaining dark background elements, especially for dropdown menus */
         div[data-baseweb="popover"], /* The dropdown menu/popover container */
         div[role="listbox"], /* The list of options inside a selectbox */
         .st-emotion-cache-1fcpj1c, /* Generic Streamlit input wrapper */
@@ -94,36 +122,7 @@ def set_styles():
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
         
-        /* Ensure the input element itself is transparent/white if a parent is coloring it */
-        input[type="text"], 
-        input[type="password"],
-        input[type="number"],
-        textarea {
-            background-color: transparent !important; /* Inherit the white background from the parent wrapper */
-            color: #000000 !important; /* Keep text black */
-        }
-        /* --- END CRITICAL UPDATE --- */
-        
-        /* --- Button Styling Fix (Explicitly White Background, Black Text) --- */
-        /* Target primary buttons (blue in default Streamlit) */
-        .st-emotion-cache-1v0bb6x { /* Common class for primary buttons */
-            background-color: #ffffff !important; /* White background */
-            color: #000000 !important; /* Black text */
-            border: 1px solid #000000 !important; /* Black border for distinction */
-        }
-        /* Target secondary/standard buttons */
-        .st-emotion-cache-7ym5gk { /* Common class for standard buttons */
-            background-color: #ffffff !important; /* White background */
-            color: #000000 !important; /* Black text */
-            border: 1px solid #ccc !important; /* Light border */
-        }
-        /* Ensure button text remains black on hover/active states if needed */
-        .st-emotion-cache-1v0bb6x:hover, .st-emotion-cache-7ym5gk:hover {
-            color: #000000 !important; 
-            border: 1px solid #000000 !important; /* Darker border on hover */
-            background-color: #f0f0f0 !important; /* Slight grey on hover */
-        }
-        /* --- END Button Styling Fix --- */
+        /* --- END CRITICAL UI OVERRIDES --- */
 
 
         /* Sidebar Title Block fix for extra space (Req 5) */
