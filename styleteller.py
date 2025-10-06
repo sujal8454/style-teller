@@ -41,42 +41,104 @@ def load_user_db():
 
 def set_styles():
     """Sets the custom CSS for the app, ensuring light background, black text, and fullscreen video."""
-    st.markdown("""
+    
+    # NEW: 5. Background Image and Overlay
+    # Placeholder for the uploaded background image in base64. 
+    # NOTE: Since no file was uploaded in this block, I am using a placeholder image and a variable 
+    # to demonstrate the required structure. In a real environment, st.session_state.logo_src 
+    # would contain the base64 data of the uploaded logo.
+    # We will use a common image format to simulate the effect.
+    BG_IMAGE_URL = "https://images.unsplash.com/photo-1558239044-6a0c0e705469?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+    
+    st.markdown(f"""
         <style>
-        /* Global Background Fix: Ensure app background is white */
-        .stApp {
-            background-color: #ffffff; /* White background */
-        }
         
-        /* 1. Ensure ALL text is BLACK for readability on white background */
+        /* --------------------------------- ANIMATIONS --------------------------------- */
+
+        /* 2. Page-Load Transition */
+        @keyframes fadeIn {
+            from {{ opacity: 0; }}
+            to {{ opacity: 1; }}
+        }}
+
+        /* 1. Intro Video Fade-In (1-2s) */
+        @keyframes videoFadeIn {
+            from {{ opacity: 0.5; }} /* Start slightly transparent */
+            to {{ opacity: 1; }}
+        }}
+        
+        /* 3. Logo Fade-In (Synchronized with page fade-in) */
+        @keyframes logoFadeIn {{
+            from {{ opacity: 0; transform: translateY(-10px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+
+        /* --------------------------------- GLOBAL STYLES --------------------------------- */
+
+        /* Global Background Fix & 5. Background Image, Cover, Center, Repeat */
+        .stApp {{
+            background-color: #ffffff; /* Fallback */
+            background-image: url("{BG_IMAGE_URL}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            
+            /* Apply general page fade-in (2. Page-Load Transition) */
+            animation: fadeIn 1s ease-in-out;
+            position: relative; /* Needed for the ::before overlay */
+        }}
+        
+        /* 5. Soft white overlay (10-20% opacity) */
+        .stApp::before {{
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.15); /* 15% opacity white overlay */
+            z-index: 0; /* Behind all content */
+        }}
+
+        /* Ensure all app content is above the overlay */
+        div[data-testid="stAppViewContainer"], 
+        div[data-testid="stSidebar"], 
+        div[data-testid="stHeader"] {{
+            z-index: 1;
+            background: transparent !important; /* Make sure containers are transparent to show background */
+        }}
+
+        /* 4. Ensure ALL text is BLACK for readability on white background */
         div, span, p, a, label, h1, h2, h3, h4, .stApp, 
         .st-emotion-cache-12fmw6v, 
         .st-emotion-cache-1fsy711 > div, 
-        div[data-testid="stAppViewContainer"] * {
+        div[data-testid="stAppViewContainer"] *,
+        div[data-baseweb="form-control"] label
+        {{
             color: #000000 !important;
-        }
+        }}
         
         /* --- EXCEPTION FOR DARK BACKGROUND UI ELEMENTS (Streamlit Sidebar/Top Menu) --- */
-        /* This overrides the global black text for elements that remain on a dark background */
-        div[data-testid="stSidebar"] *, /* All text in the dark sidebar */
-        .st-emotion-cache-zq5aqc, /* Class for Streamlit's header/top-right menu container */
-        .st-emotion-cache-9y213l, /* Class for 'Fork' link text */
-        .st-emotion-cache-1g6h684, /* Class for the 3-dot menu icon/text */
-        div[data-testid="stSidebarContent"] button, /* Button text inside the dark sidebar */
-        .st-emotion-cache-5rimss /* Another common button text/icon class in sidebar */
-        {
-            color: #ffffff !important; /* Force text to white on dark background */
-        }
+        /* Sidebar remains dark, force text to white */
+        div[data-testid="stSidebar"] *, 
+        .st-emotion-cache-zq5aqc, 
+        .st-emotion-cache-9y213l, 
+        .st-emotion-cache-1g6h684, 
+        div[data-testid="stSidebarContent"] button, 
+        .st-emotion-cache-5rimss 
+        {{
+            color: #ffffff !important;
+        }}
         
         /* 1a. Ensure sidebar button backgrounds are transparent/dark so text is visible */
-        div[data-testid="stSidebarContent"] button {
+        div[data-testid="stSidebarContent"] button {{
             background-color: transparent !important;
-            border: 1px solid #ffffff33 !important; /* Light border for visibility */
-        }
+            border: 1px solid #ffffff33 !important; 
+        }}
         /* End of sidebar/dark element exceptions */
 
 
-        /* --- CRITICAL INPUT FIELD OVERRIDE (FIX for Black Boxes) --- */
+        /* --- 4. CRITICAL INPUT FIELD OVERRIDE (Fix Black Boxes to White) --- */
 
         /* Target the actual input element for text, number, and password fields */
         div[data-baseweb="input"] input,
@@ -85,80 +147,99 @@ def set_styles():
         input[type="text"], 
         input[type="password"],
         input[type="number"],
-        textarea {
+        textarea {{
             background-color: #ffffff !important; /* Force the field itself to white */
             color: #000000 !important; /* Force text to black */
-            border: 1px solid #e0e0e0 !important; 
+            border: 1px solid #000000 !important; /* Black border for premium look */
             -webkit-appearance: none; 
             appearance: none;
-        }
+        }}
         
         /* Ensure the input container also respects the white theme */
         div[data-testid="stTextInput"] > div > div, 
         div[data-testid="stNumberInput"] > div > div,
         div[data-testid="stSelectbox"] > div,
-        div[data-baseweb="input"] {
+        div[data-baseweb="input"],
+        .st-emotion-cache-1fcpj1c, /* Generic Streamlit input wrapper */
+        .st-emotion-cache-16j94j4 /* Another common input wrapper class */
+        {{
             background-color: #ffffff !important;
-        }
+            border-color: #000000 !important; /* Keep container borders consistent */
+        }}
         
         /* Selectbox/Dropdown Display Text: Ensure selected option text is BLACK */
-        div[data-testid="stSelectbox"] div[data-baseweb="select"] input {
+        div[data-testid="stSelectbox"] div[data-baseweb="select"] input {{
              color: #000000 !important;
-        }
+        }}
 
-        /* --- BUTTON STYLING OVERRIDE (FIX for Black Buttons/Boxes) --- */
+        /* --- 4. BUTTON STYLING OVERRIDE (Fix Black Buttons to White) --- */
 
         /* Target all common button containers, including primary and secondary */
-        /* .st-emotion-cache-1v0bb6x is the class for the PRIMARY button (The "Start Now" button) */
-        /* Force Primary Button (Start Now) to white background / black text */
         div[data-testid="stVerticalBlock"] .st-emotion-cache-1v0bb6x, 
-        .st-emotion-cache-1v0bb6x, /* Primary buttons (Start Now) */
-        .st-emotion-cache-7ym5gk, /* Standard/Secondary buttons (Style buttons, Login/Signup) */
+        .st-emotion-cache-1v0bb6x, 
+        .st-emotion-cache-7ym5gk, 
         div[data-testid*="stButton"] > button
-        {
-            background-color: #ffffff !important; /* White background */
+        {{
+            background-color: #ffffff !important; /* Pure White background */
             color: #000000 !important; /* Black text */
             border: 1px solid #000000 !important; /* Black border for distinction */
             box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-        }
+        }}
         
         /* Ensure button text remains black on hover/active states if needed */
         .st-emotion-cache-1v0bb6x:hover, 
         .st-emotion-cache-7ym5gk:hover,
-        div[data-testid*="stButton"] > button:hover {
+        div[data-testid*="stButton"] > button:hover {{
             color: #000000 !important; 
             border: 1px solid #000000 !important; 
             background-color: #f0f0f0 !important; 
-        }
+        }}
         
-        /* --- General Dark Container Fixes (Forms, Alerts, etc.) --- */
+        /* --- 4. General Dark Container Fixes (Forms, Alerts, etc.) --- */
         div.st-emotion-cache-6o6vcr, 
         div[data-testid="stForm"], 
         div[data-testid="stAlert"],
-        div[data-baseweb="popover"], /* The dropdown menu/popover container */
-        div[role="listbox"], /* The list of options inside a selectbox */
-        .st-emotion-cache-1fcpj1c, /* Generic Streamlit input wrapper */
-        .st-emotion-cache-16j94j4 /* Another common input wrapper class */
-        {
-            background-color: #ffffff !important; 
-            border: 1px solid #e0e0e0; /* Add a slight border for distinction */
+        div[data-baseweb="popover"], 
+        div[role="listbox"]
+        {{
+            background-color: #ffffff !important; /* Pure White */
+            border: 1px solid #000000; /* Use black border for clean look */
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
+        }}
         
         /* --- END CRITICAL UI OVERRIDES --- */
 
+        /* 3. Logo Container Styling */
+        .logo-container {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            margin-bottom: -15px; /* Adjust spacing below logo */
+            animation: logoFadeIn 1s ease-out 0s forwards; /* 3. Logo Fade-In */
+            opacity: 0;
+            z-index: 2;
+        }}
+
+        .app-logo {{
+            max-width: 150px; 
+            height: auto;
+            border-radius: 0;
+        }}
 
         /* Sidebar Title Block fix for extra space (Req 5) */
-        div[data-testid="stSidebarContent"] > div:nth-child(1) {
+        div[data-testid="stSidebarContent"] > div:nth-child(1) {{
             padding-bottom: 0px !important; 
             margin-bottom: -10px !important;
-        }
+        }}
 
 
-        /* --- Intro Video Fullscreen (Req 1) --- */
+        /* --- 1. Intro Video Fullscreen Fix & Animation --- */
         
         /* This targets the main content area when the video is active and forces it fullscreen */
-        .video-active div[data-testid="stAppViewContainer"] {
+        .video-active div[data-testid="stAppViewContainer"] {{
             position: fixed;
             top: 0;
             left: 0;
@@ -168,98 +249,112 @@ def set_styles():
             background-color: #000000 !important; /* Black background for video mode */
             padding: 0 !important;
             margin: 0 !important;
-        }
+        }}
         
         /* Hide sidebar while video is active */
-        .video-active div[data-testid="stSidebar"] {
+        .video-active div[data-testid="stSidebar"] {{
             display: none !important;
-        }
+        }}
 
         /* Center the video element */
-        .video-active div[data-testid="stVerticalBlock"] {
+        .video-active div[data-testid="stVerticalBlock"] {{
             width: 100%;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-        }
+            animation: videoFadeIn 1.5s ease-in-out forwards; /* 1. Video Fade-In */
+        }}
         
         /* Make the video itself cover the screen */
-        .video-active video {
+        .video-active video {{
              width: 100vw !important;
              height: 100vh !important;
-             object-fit: cover !important; /* Ensure video covers the entire screen */
+             object-fit: cover !important; 
              margin: 0 !important;
              padding: 0 !important;
-        }
+        }}
         
         /* Hide the progress bar/text area when video is running, except for the progress bar itself */
-        .video-active div[data-testid="stProgress"] * {
+        .video-active div[data-testid="stProgress"] * {{
             color: white !important; /* Ensure progress text is visible on black background */
-        }
+        }}
 
 
         /* --- Standard Layout CSS retained below --- */
 
-        .st-emotion-cache-j93igk {
+        .st-emotion-cache-j93igk {{
             border-bottom: 2px solid #ccc;
-        }
+        }}
         
         /* Default container styling (Now white via global fix) */
-        div.st-emotion-cache-6o6vcr {
+        div.st-emotion-cache-6o6vcr {{
             border-radius: 10px;
             padding: 20px;
-        }
+        }}
 
-        .st-emotion-cache-11r9w7n, .st-emotion-cache-11r9w7n .st-bm {
+        .st-emotion-cache-11r9w7n, .st-emotion-cache-11r9w7n .st-bm {{
             width: 100%;
-        }
+        }}
 
-        .st-emotion-cache-13srm2a .st-emotion-cache-7ym5gk {
+        .st-emotion-cache-13srm2a .st-emotion-cache-7ym5gk {{
             margin: 10px 0;
-        }
+        }}
 
-        .outfit-container {
+        .outfit-container {{
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
             margin-top: 20px;
-        }
+        }}
 
-        .outfit-card {
+        .outfit-card {{
             background: #fff;
             border-radius: 10px;
             padding: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             text-align: center;
-        }
+        }}
 
-        .outfit-card img {
+        .outfit-card img {{
             max-width: 100%;
             border-radius: 8px;
-        }
+        }}
         
         </style>
         <script>
         // Use Javascript to toggle a class on the body to control video fullscreen
-        function setVideoMode(isActive) {
-            if (isActive) {
+        function setVideoMode(isActive) {{
+            if (isActive) {{
                 document.body.classList.add('video-active');
-            } else {
+            }} else {{
                 document.body.classList.remove('video-active');
-            }
-        }
+            }}
+        }}
         </script>
     """, unsafe_allow_html=True)
 
+
+def display_logo():
+    """3. Displays the high-res, center-aligned logo with fade-in animation."""
+    # Placeholder for the uploaded logo data
+    logo_b64 = st.session_state.get("logo_src")
+
+    if logo_b64:
+        st.markdown(f"""
+            <div class='logo-container'>
+                <img src="data:image/png;base64,{logo_b64}" class="app-logo" alt="Style Teller Logo" />
+            </div>
+        """, unsafe_allow_html=True)
 
 # --- Page Functions ---
 
 def intro_video():
     """Displays the intro video screen and automatically proceeds to login."""
     # Run JS to activate fullscreen mode CSS (Req 1)
+    # The CSS now handles the smooth fade-in and visibility fix.
     st.components.v1.html("<script>setVideoMode(true);</script>", height=0)
     
     # FIX: Replaced unreliable Google Drive link with a known, publicly hosted MP4 file
@@ -293,6 +388,7 @@ def login_signup():
     
     st.markdown("<h1 style='text-align: center;'>Style Teller</h1>", unsafe_allow_html=True)
     
+    # Note: st.markdown here will appear below the centralized logo
     st.markdown("<div class='st-emotion-cache-6o6vcr'>", unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center;'>Login or Sign Up</h2>", unsafe_allow_html=True)
 
@@ -456,6 +552,30 @@ def upload_image_screen():
     st.title("Upload Your Image")
     st.markdown("<p>Upload a clear image of yourself so we can create personalized outfit recommendations.</p>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload an image of yourself", type=["jpg", "jpeg", "png"])
+    
+    # 6. Rules Section Re-added with required styling
+    st.markdown("""
+        <div style="margin-top: 30px; padding: 20px; border: 1px solid #000000; border-radius: 5px; background-color: #ffffff;">
+            <p style="font-weight: 500; font-size: 1.1em; color: #000000; margin-bottom: 10px;">
+                Your avatar starts with the right photo<br>
+                Here are some quick tips to nail it ✨
+            </p>
+            <ul style="list-style-type: none; padding-left: 0; line-height: 1.6;">
+                <li style="color: #000000; margin-bottom: 10px;">
+                    <strong>• Full Body Shot</strong><br>
+                    <span style="font-weight: 300; color: #000000;">Show your complete outfit from head to toe for accurate style analysis.</span>
+                </li>
+                <li style="color: #000000; margin-bottom: 10px;">
+                    <strong>• Plain Background</strong><br>
+                    <span style="font-weight: 300; color: #000000;">Use a simple, uncluttered background to help our AI focus on your style.</span>
+                </li>
+                <li style="color: #000000;">
+                    <strong>• Good Lighting</strong><br>
+                    <span style="font-weight: 300; color: #000000;">Natural light works best – avoid shadows and dark areas for clearer photos.</span>
+                </li>
+            </ul>
+        </div>
+    """, unsafe_allow_html=True)
     
     if uploaded_file:
         st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
@@ -670,13 +790,25 @@ def main():
         st.session_state["otp_sent"] = False
     if "mock_phone" not in st.session_state:
         st.session_state["mock_phone"] = None
+        
+    # NEW: 3. Logo Source Placeholder
+    # In a real app, you would load the logo file here and convert it to base64.
+    # For this exercise, we'll use a placeholder for the base64 string.
+    # Placeholder for a simple Style Teller logo image in base64 format (a white square with black text)
+    # Note: In a live app, this placeholder should be replaced with the actual uploaded logo's base64 data.
+    if "logo_src" not in st.session_state:
+         # Creating a mock base64 string for a white/black logo image
+         st.session_state["logo_src"] = "iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAAA8AX2jAAAACXBIWXMAAAsTAAALEwEAmpwYAAABHklEQVR4nO3WsQ0AIAwEsH/ptJvR5gN0V8hNzsUAAAAAAAAA7/1V/N/kL37tT71U6A8BAAAAAAAAAAAgGWAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgMmAyYDJgAAAAAAbn8F+L9PvwGj5gEwAAAAAElFTkSuQmCC"
 
     set_styles()
-
+    
     if not st.session_state.get("video_played"):
         # Req 1: Auto-play fullscreen video and auto-transition
         intro_video()
         return
+
+    # 3. Display Logo for all screens after the video
+    display_logo()
 
     if not st.session_state["logged_in"]:
         login_signup()
