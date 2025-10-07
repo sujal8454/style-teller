@@ -8,6 +8,10 @@ import time
 import base64
 import random
 
+# --- Logo Constant ---
+# This Base64 string represents the logo image, allowing it to be embedded directly into the script.
+LOGO_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4MoaAAAAAXNSR0IArs4c6QAAAXxJREFUeJzt2j9LA0EYB/BfE8GgCgqCKg4O4urNwc4WbGwQxM5OqS/gP0h+gvwT+C/g+B4qDpFw8Q1d+jO2wWd35uD0g/A8+B7cZ3nZ7u/2O1d8n2y7F+v9iP95t7xXn63j27/P57P5....." # Note: This is a placeholder for the full, extremely long Base64 string.
+
 # --- Database and File Handling Functions ---
 
 # Note: In a real-world scenario, these files would be stored in a cloud environment (like S3 or Google Cloud Storage)
