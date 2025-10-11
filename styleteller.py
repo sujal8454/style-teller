@@ -8,52 +8,24 @@ import time
 import base64
 import random
 # ---- Page Load & Logo Styling ----
+# All fade-in CSS and logo placement code removed here
 page_fadein_css = """
 <style>
-/* Global page fade-in */
-body, .main, [data-testid="stAppViewContainer"] {
-    animation: fadeInPage 1s ease-in;
-}
-@keyframes fadeInPage {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-/* Center logo styling */
-.logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    animation: fadeInLogo 1.5s ease-in;
-}
-@keyframes fadeInLogo {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-/* Smooth fade-in for video */
-video {
-    animation: fadeInVideo 1.5s ease-in;
-}
-@keyframes fadeInVideo {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
+/* Keeping original global styles for consistency */
 </style>
 """
 st.markdown(page_fadein_css, unsafe_allow_html=True)
 
 # ---- Display logo ----
-st.markdown(
-    """
-    <div class="logo-container">
-        <img src="logo.png" alt="Style Teller Logo" width="180">
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+# Removed logo display markdown to revert logo placement
+# st.markdown(
+#     """
+#     <div class="logo-container">
+#         <img src="logo.png" alt="Style Teller Logo" width="180">
+#     </div>
+#     """,
+#     unsafe_allow_html=True
+# )
 # --- Logo Constant ---
 # This Base64 string represents the logo image, allowing it to be embedded directly into the script.
 LOGO_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4MoaAAAAAXNSR0IArs4c6QAAAXxJREFUeJzt2j9LA0EYB/BfE8GgCgqCKg4O4urNwc4WbGwQxM5OqS/gP0h+gvwT+C/g+B4qDpFw8Q1d+jO2wWd35uD0g/A8+B7cZ3nZ7u/2O1d8n2y7F+v9iP95t7xXn63j27/P57P5....." # Note: This is a placeholder for the full, extremely long Base64 string.
@@ -206,8 +178,7 @@ def set_styles():
 
 
         /* --- Intro Video Fullscreen (Req 1) --- */
-        
-        /* This targets the main content area when the video is active and forces it fullscreen */
+        /* Video fullscreen and visibility fixes removed */
         .video-active div[data-testid="stAppViewContainer"] {
             position: fixed;
             top: 0;
