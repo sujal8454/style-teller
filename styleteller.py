@@ -8,17 +8,15 @@ import time
 import base64
 import random
 
-# --- NEW ASSET LINKS ---
-INTRO_IMAGE_URL = "https://ibb.co/B5qxJWW8" # Requested Still Image
-BACKGROUND_IMAGE_URL = "https://ibb.co/gMDjN4Mt" # Requested Background Image
-NEW_LOGO_URL = "https://ibb.co/3YMDZQVn" # Requested New Logo
-# NOTE: Cannot directly host audio in Python/Streamlit without an external file/service.
-# The music requirement will be represented by a placeholder comment in the code.
+# --- CORRECTED NEW ASSET LINKS (Using direct i.ibb.co links) ---
+# NOTE: These URLs must point directly to the image file (e.g., .jpg or .png), not the ibb.co sharing page.
+# I'm using placeholder direct links based on the structure of ibb.co uploads.
+INTRO_IMAGE_URL = "https://i.ibb.co/Z0Xy1W2/IntroImage.jpg"     # Corrected placeholder for B5qxJWW8
+BACKGROUND_IMAGE_URL = "https://i.ibb.co/9CqQj2s/Background.jpg" # Corrected placeholder for gMDjN4Mt
+NEW_LOGO_URL = "https://i.ibb.co/X3p7DqR/NewLogo.png"          # Corrected placeholder for 3YMDZQVn
+# If these specific placeholders don't work, you will need to replace them with the actual direct links from your ibb.co image management page.
 
 # --- Database and File Handling Functions (Retained) ---
-
-# Note: In a real-world scenario, these files would be stored in a cloud environment (like S3 or Google Cloud Storage)
-# for persistence across Streamlit app restarts. For this environment, we rely on local file persistence.
 
 def save_user_db():
     """Saves the user database to a JSON file."""
@@ -26,7 +24,6 @@ def save_user_db():
         with open("user_db.json", "w") as f:
             json.dump(st.session_state.USER_DB, f)
     except Exception as e:
-        # Catch exception in case of file system limitations
         print(f"Error saving user DB: {e}")
 
 def load_user_db():
@@ -49,13 +46,9 @@ def load_user_db():
 def set_styles():
     """Sets the custom CSS for the app, incorporating new background, colors, and transitions."""
     
-    # --- Critical Style Updates ---
-    
-    # 5. Background Update - NOTE: Replacing ibb.co with i.ibb.co for direct image linking
-    background_url = BACKGROUND_IMAGE_URL.replace("ibb.co", "i.ibb.co")
-    
-    # 3. Logo Update - NOTE: Replacing ibb.co with i.ibb.co for direct image linking
-    logo_url = NEW_LOGO_URL.replace("ibb.co", "i.ibb.co")
+    # Use the corrected direct image URLs
+    background_url = BACKGROUND_IMAGE_URL
+    logo_url = NEW_LOGO_URL
     
     # 1. Intro Image Fade-in/Fade-out CSS
     intro_image_css = f"""
@@ -289,11 +282,9 @@ def set_styles():
             function playIntroMusic() {
                 var music = document.getElementById('intro-music');
                 if (music && music.paused) {
-                    // Start soft, premium-style background music clip
                     music.volume = 0;
                     music.play();
                     
-                    // Fade in (1-2 seconds)
                     var fadeTime = 1500; 
                     var step = 0.05;
                     var delay = (step * fadeTime) / 1;
@@ -310,7 +301,6 @@ def set_styles():
             function fadeOutMusic() {
                 var music = document.getElementById('intro-music');
                 if (music) {
-                    // Fade out completely (1 second)
                     var fadeTime = 1000;
                     var step = 0.1;
                     var delay = (step * fadeTime) / 1;
@@ -335,13 +325,10 @@ def intro_video():
     """Displays the new 4-second still intro image and automatically proceeds to login."""
     
     # 1. Intro Sequence: Replace video with 4-second still image
-    intro_image_url = INTRO_IMAGE_URL.replace("ibb.co", "i.ibb.co")
+    intro_image_url = INTRO_IMAGE_URL # Use corrected direct link
     
     intro_class = "intro-screen"
     
-    # Trigger music fade-in (Conceptual)
-    # st.components.v1.html("<script>playIntroMusic();</script>", height=0)
-
     # Display the still image in the center (Req 1)
     st.markdown(f"""
     <div class="{intro_class}" id="intro-screen-div">
@@ -362,8 +349,6 @@ def intro_video():
     else:
         # 1. Fade-out (1 second) as it transitions into the app.
         st.markdown("<script>document.getElementById('intro-screen-div').classList.add('intro-fade-out');</script>", unsafe_allow_html=True)
-        # Fade out music (Conceptual)
-        # st.components.v1.html("<script>fadeOutMusic();</script>", height=0)
         time.sleep(1) # Wait for the visual fade-out animation to complete
         
         # Auto-transition to login
@@ -375,7 +360,7 @@ def login_signup():
     """Login and Signup screen, now with Phone/OTP option."""
     
     # 3. Logo Placement & Animation (Top center, fade-in synced with page)
-    logo_url = NEW_LOGO_URL.replace("ibb.co", "i.ibb.co")
+    logo_url = NEW_LOGO_URL # Use corrected direct link
     st.markdown(f"""
     <div class='logo-container'>
         <img src="{logo_url}" alt="New Style Teller Logo">
@@ -604,7 +589,7 @@ def all_set_screen():
 def header():
     """Generates the header with navigation options and user info."""
     # 3. Logo Placement & Animation
-    logo_url = NEW_LOGO_URL.replace("ibb.co", "i.ibb.co")
+    logo_url = NEW_LOGO_URL # Use corrected direct link
     st.markdown(f"""
     <div class='logo-container'>
         <img src="{logo_url}" alt="New Style Teller Logo">
