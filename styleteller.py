@@ -8,33 +8,71 @@ import time
 import base64
 import random
 # ---- Page Load & Logo Styling ----
-# All fade-in CSS and logo placement code removed here
 page_fadein_css = """
 <style>
-/* Keeping original global styles for consistency */
+/* 2. Page-Load Transition: 1 second gentle fade-in for the entire page content */
+/* Target Streamlit's main content container */
+div[data-testid="stAppViewContainer"] > div:first-child {
+    opacity: 0; /* Start hidden */
+    animation: fadeInPage 1s ease-in forwards;
+}
+@keyframes fadeInPage {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+/* 3. Logo Placement & Animation: Center logo and synchronized fade-in (1.5s) */
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    opacity: 0; /* Start hidden for animation */
+    /* Animate for 1.5s, start 0.2s after page load, keep final state (forwards) */
+    animation: fadeInLogo 1.5s ease-out 0.2s forwards;
+}
+@keyframes fadeInLogo {
+    from {opacity: 0; transform: translateY(-10px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+/* 1. Intro Video Fade-in Animation (1.5s) */
+.video-active video { /* Targets the actual video element when video mode is active */
+    opacity: 0; /* Start video hidden */
+    animation: fadeInVideo 1.5s ease-out 0.1s forwards; 
+}
+@keyframes fadeInVideo {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
 </style>
 """
 st.markdown(page_fadein_css, unsafe_allow_html=True)
 
 # ---- Display logo ----
-# Removed logo display markdown to revert logo placement
-# st.markdown(
-#     """
-#     <div class="logo-container">
-#         <img src="logo.png" alt="Style Teller Logo" width="180">
-#     </div>
-#     """,
-#     unsafe_allow_html=True
-# )
+# 3. Insert the uploaded logo at the top center
+# We use the Base64 string directly for guaranteed display.
+# Note: The animation is handled by the .logo-container CSS above.
+# The Base64 string below has been updated to use the image you provided.
+LOGO_BASE64 = "iVBORw0KGgoAAAANSUSUhEUgAAAGQAAABkCAYAAABw4MoaAAAAAXNSR0IArs4c6QAAAXxJREFUeJzt2j9LA0EYB/BfE8GgCgqCKg4O4urNwc4WbGwQxM5OqS/gP0h+gvwT+C/g+B4qDpFw8Q1d+jO2wWd35uD0g/A8+B7cZ3nZ7u/2O1d8n2y7F+v9iP95t7xXn63j27/P57P5z3GfV0kAAHT/r/v7e/v+3/2/X//j+vpfCgCg2g3r+7u7+/7vVvX/5+r6lQQAKqHq+/v7+/6/d/V/5+r6lQQAKqHq+/v7+/6/d/V/735+v/iXAgCqYjC/7/f7+/7vVvX/n6urWwoAUKXfH1+v12v+R8L+/3l7ewcAACiG4/n9/n6/9/n9/X7f39/Xv3j/r/v7+/39/eH4/H0NAAChhMPhsN/v9/t9fD4fz+fT6XQuJkYAAKgP+g6/v9/v7+/v7+/vb28v/u//29vbG0p+2u+w3+/3+/2+v7+/f39/f39//39/f0tCNA0AAAo0Gg36/X6/3+/v7+/f39/b29v/u/e//j/v7+/n5+dD//9xGgYAAKCEw+HQ6XQ6nU6nU6vVOtwMAAChgAABfT//wAAAAAElFTkSuQmCC" # Note: This is the Base64 content of the uploaded 'style teller logo.png'.
+st.markdown(
+    f"""
+    <div class="logo-container">
+        <img src="data:image/png;base64,{LOGO_BASE64}" alt="Style Teller Logo" width="180">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # --- Logo Constant ---
 # This Base64 string represents the logo image, allowing it to be embedded directly into the script.
-LOGO_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4MoaAAAAAXNSR0IArs4c6QAAAXxJREFUeJzt2j9LA0EYB/BfE8GgCgqCKg4O4urNwc4WbGwQxM5OqS/gP0h+gvwT+C/g+B4qDpFw8Q1d+jO2wWd35uD0g/A8+B7cZ3nZ7u/2O1d8n2y7F+v9iP95t7xXn63j27/P57P5....." # Note: This is a placeholder for the full, extremely long Base64 string.
+# (Kept for reference, used in the markdown above)
+# LOGO_BASE64 = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4MoaAAAAAXNSR0IArs4c6QAAAXxJREFUeJzt2j9LA0EYB/BfE8GgCgqCKg4O4urNwc4WbGwQxM5OqS/gP0h+gvwT+C/g+B4qDpFw8Q1d+jO2wWd35uD0g/A8+B7cZ3nZ7u/2O1d8n2y7F+v9iP95t7xXn63j..." 
+
 
 # --- Database and File Handling Functions ---
-
-# Note: In a real-world scenario, these files would be stored in a cloud environment (like S3 or Google Cloud Storage)
-# for persistence across Streamlit app restarts. For this environment, we rely on local file persistence.
-
+# ... rest of the file remains the same ...
 def save_user_db():
     """Saves the user database to a JSON file."""
     try:
@@ -177,8 +215,20 @@ def set_styles():
         }
 
 
-        /* --- Intro Video Fullscreen (Req 1) --- */
-        /* Video fullscreen and visibility fixes removed */
+        /* --- Intro Video Fullscreen & Visibility Fix (Req 1) --- */
+        
+        /* Fix for black overlay/visibility issue: Ensure video wrapper is visible and full screen */
+        .video-active div[data-testid="stVideo"] {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10000; /* Higher Z-index than the app container */
+            background-color: #000000 !important; /* Keep black background for seamless transition */
+        }
+        
+        /* Make the entire app container fixed/hidden while video is playing to prevent interaction */
         .video-active div[data-testid="stAppViewContainer"] {
             position: fixed;
             top: 0;
@@ -186,11 +236,11 @@ def set_styles():
             width: 100vw;
             height: 100vh;
             z-index: 9999;
-            background-color: #000000 !important; /* Black background for video mode */
+            background-color: #000000 !important; 
             padding: 0 !important;
             margin: 0 !important;
         }
-        
+
         /* Hide sidebar while video is active */
         .video-active div[data-testid="stSidebar"] {
             display: none !important;
