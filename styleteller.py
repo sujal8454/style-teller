@@ -1,7 +1,7 @@
 # --- START: StyleTeller UI Enhancements (intro, theme, logo, background, rules) ---
-import random
 import streamlit as st
 from streamlit.components.v1 import html as components_html
+
 _intro_html = r"""
 <style>
 /* Page fade-in */
@@ -194,6 +194,7 @@ else:
 
 # --- ORIGINAL APP CODE (unchanged) ---
 
+import streamlit as st
 from PIL import Image
 import requests
 from io import BytesIO
@@ -201,6 +202,169 @@ import json
 import os
 import time
 import base64
+import random
+
+# --- INTRO & UI THEME INJECTION START ---
+import time
+try:
+    import streamlit as st  # should already be imported but safe guard
+    from streamlit.components.v1 import html as components_html
+except Exception:
+    pass
+
+# Intro sequence: show a 4-second still image with fade in/out and background audio.
+_intro_key = "_style_teller_intro_shown"
+def show_intro_once():
+    if st.session_state.get(_intro_key, False):
+        return
+    placeholder = st.empty()
+    intro_html = """
+    <div id="styleteller-intro" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+        background: rgba(255,255,255,0.0);backdrop-filter: blur(0px);">
+      <div style="text-align:center;max-width:100%;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+        <div style="position:relative; display:flex; align-items:center; justify-content:center; width:100%; height:100%;">
+          <img id="intro-img" src="https://i.ibb.co/B5qxJWW8/intro.png" style="max-width:70%; max-height:70%; opacity:0; transition: opacity 1.2s ease;" />
+          <audio id="intro-audio" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_7e5b3f7c0c.mp3?filename=relaxing-piano-11248.mp3" preload="auto"></audio>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function() {
+        const img = document.getElementById('intro-img');
+        const audio = document.getElementById('intro-audio');
+        // fade in image and audio
+        setTimeout(()=>{ img.style.opacity = 1; try{ audio.volume=0.0; audio.play(); 
+            // fade audio in
+            let vol=0.0; const ramp = setInterval(()=>{ vol += 0.05; audio.volume = Math.min(vol,0.6); if(vol>=0.6) clearInterval(ramp); }, 100); }catch(e){} }, 50);
+        // after 4s start fade out
+        setTimeout(()=>{ img.style.opacity = 0; try{ 
+            // fade audio out
+            let vol = audio.volume; const ramp2 = setInterval(()=>{ vol -= 0.08; audio.volume = Math.max(vol,0); if(vol<=0){ audio.pause(); clearInterval(ramp2); } }, 80); }catch(e){} 
+            // remove overlay from DOM after transition
+            setTimeout(()=>{ const el = document.getElementById('styleteller-intro'); if(el) el.remove(); }, 1100);
+        }, 4050);
+      })();
+    </script>
+    """
+    components_html(intro_html, height=600)
+    # keep intro visible server-side for 4.2s to allow client animations to run
+    time.sleep(4.2)
+    placeholder.empty()
+    st.session_state[_intro_key] = True
+
+# run intro early (before main UI)
+try:
+    show_intro_once()
+except Exception:
+    pass
+
+# Global CSS adjustments: background, page fade-in, logo, color boxes
+global_css = """
+<style>
+/* Page fade-in */
+html, body, .main, .block-container {
+  animation: pageFadeIn 1s ease forwards;
+  opacity: 0;
+}
+@keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Background image */
+.stApp {
+  background-image: url('https://i.ibb.co/gMDjN4Mt/background.jpg');
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  position: relative;
+}
+/* white soft overlay */
+.stApp::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.12);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Force any black boxes to white with black text for contrast */
+*[style*="background:#000"], *[style*="background:#000000"], *[style*="background: #000"], *[style*="background: #000000"] {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* Generic card overrides (Streamlit cards) */
+.css-1d391kg, .css-18e3th9, .stButton, .stTextInput, .stSelectbox, .stTextArea {
+  background: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* Logo placement at top center */
+#styleteller-logo-wrap {
+  text-align:center;
+  width:100%;
+  display:block;
+  margin-top:10px;
+  margin-bottom:8px;
+  z-index: 2;
+  position: relative;
+}
+#styleteller-logo-wrap img {
+  max-height:88px;
+  width:auto;
+  opacity:0;
+  transition: opacity 1s ease;
+}
+/* show logo after page fade */
+html.loaded #styleteller-logo-wrap img { opacity: 1; }
+
+/* Tiny tech dots decoration */
+.tech-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0,150,255,0.95);
+  box-shadow: 0 0 8px rgba(0,150,255,0.8);
+  z-index: 1;
+  opacity: 0.9;
+}
+</style>
+<script>
+// add 'loaded' class after content load to trigger logo appearance
+window.addEventListener('load', function(){ document.documentElement.classList.add('loaded'); });
+
+// randomly scatter some tech dots
+function placeDots(count){
+  for(let i=0;i<count;i++){
+    const d = document.createElement('div');
+    d.className='tech-dot';
+    d.style.left = (Math.random()*90+2) + '%';
+    d.style.top = (Math.random()*85+3) + '%';
+    d.style.opacity = (0.4 + Math.random()*0.9);
+    d.style.transform = 'scale(' + (0.6 + Math.random()*1.4) + ')';
+    document.body.appendChild(d);
+  }
+}
+setTimeout(()=>placeDots(28), 800);
+</script>
+"""
+
+# Inject CSS/JS
+try:
+    st.markdown(global_css, unsafe_allow_html=True)
+except Exception:
+    try:
+        components_html(global_css, height=0)
+    except Exception:
+        pass
+
+# Insert top-center logo (will fade in with page)
+try:
+    st.markdown('<div id="styleteller-logo-wrap"><img src="https://i.ibb.co/3YMDZQVn/logo.png" alt="StyleTeller" /></div>', unsafe_allow_html=True)
+except Exception:
+    pass
+
+# --- INTRO & UI THEME INJECTION END ---
 # ---- Page Load & Logo Styling ----
 # All fade-in CSS and logo placement code removed here
 page_fadein_css = """
