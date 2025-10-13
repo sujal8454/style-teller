@@ -1,3 +1,200 @@
+
+# --- START: StyleTeller UI Enhancements (intro, theme, logo, background, rules) ---
+import streamlit as st
+from streamlit.components.v1 import html as components_html
+
+_intro_html = r"""
+<style>
+/* Page fade-in */
+.stApp { opacity: 0; transition: opacity 1s ease; --stapp-opacity: 1; }
+
+/* Custom logo header */
+#custom-logo-header {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+  z-index: 1001;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+#custom-logo-header img { max-height: 72px; width: auto; object-fit: contain; }
+
+/* Intro overlay full-screen */
+#intro-overlay {
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  z-index: 10000; background: rgba(255,255,255,1);
+}
+#intro-overlay img { max-width: 80vw; max-height: 80vh; width: auto; height: auto; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); opacity: 0; transition: opacity 1.5s ease; }
+
+/* Background image & white overlay */
+html, body { height: 100%; }
+body {
+  background-image: url('https://ibb.co/gMDjN4Mt');
+  background-size: cover; background-position: center; background-repeat: no-repeat !important;
+  background-color: #ffffff;
+}
+
+/* white overlay on background - placed behind app content */
+#background-white-overlay {
+  position: fixed; inset: 0; z-index: -9998; pointer-events: none;
+  background-color: rgba(255,255,255,0.12);
+  width: 100%; height: 100%;
+}
+
+/* Force white boxes & black text for common containers */
+.stApp .block-container,
+.stApp .element-container,
+.stApp .stButton,
+.stApp .main,
+.stApp .stMarkdown,
+.stApp .stTextInput,
+.stApp .stFileUploader,
+.stApp .stSidebar {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+/* Also override inline black backgrounds if present */
+*[style*="background-color: rgb(0, 0, 0)"]{ background-color: #FFFFFF !important; color: #000000 !important; }
+*[style*="background:#000"], *[style*="background: #000"], *[style*="background-color:#000"]{ background-color: #FFFFFF !important; color: #000000 !important; }
+
+/* Rules block */
+.custom-rules { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial; color: #000000; font-weight: 500; line-height: 1.5; margin-top: 12px; }
+.custom-rules .title { font-size: 16px; margin-bottom: 8px; }
+.custom-rules ul { margin-top: 8px; padding-left: 18px; }
+.custom-rules li { margin-bottom: 10px; }
+
+/* Ensure inputs and textareas keep black text on white backgrounds */
+input, textarea, select { color: #000000 !important; background-color: #FFFFFF !important; }
+
+</style>
+
+<div id="intro-overlay" aria-hidden="true">
+  <img id="intro-image" src="https://ibb.co/B5qxJWW8" alt="Intro" />
+  <audio id="intro-audio" src="" preload="auto"></audio>
+</div>
+
+<div id="background-white-overlay"></div>
+
+<script>
+(function(){
+  const AUDIO_ENABLED = true; // attempt to play; browsers may block autoplay
+
+  const audio = document.getElementById('intro-audio');
+  // NOTE: Using an external audio URL may be blocked; left empty so browser fallback is graceful.
+  // If you prefer a bundled audio clip, replace audio.src with a valid URL or base64 data URI.
+  audio.loop = false;
+  audio.volume = 0.0;
+
+  const overlay = document.getElementById('intro-overlay');
+  const img = document.getElementById('intro-image');
+
+  // Small delay to let component mount, then fade in image and attempt audio
+  setTimeout(()=>{ 
+    try{ img.style.opacity = 1; }catch(e){}
+    if(AUDIO_ENABLED){
+      try{ 
+        const playPromise = audio.play();
+        if(playPromise !== undefined){
+          playPromise.then(()=>{ fadeAudioIn(audio,1500); }).catch(()=>{/* autoplay blocked */});
+        }
+      } catch(e){}
+    }
+  }, 60);
+
+  // After 4 seconds total, fade out overlay over 1s, fade audio out, then remove overlay and show app
+  setTimeout(()=> {
+    overlay.style.transition = 'opacity 1s ease';
+    overlay.style.opacity = 0;
+    fadeAudioOut(audio,1000);
+    setTimeout(()=>{ overlay.remove(); showMainApp(); }, 1000);
+  }, 4000);
+
+  function showMainApp(){
+    const app = document.querySelector('.stApp');
+    if(app){ app.style.opacity = 1; }
+    // insert custom logo header if not exists
+    if(!document.getElementById('custom-logo-header')){
+      const header = document.createElement('div');
+      header.id = 'custom-logo-header';
+      header.innerHTML = '<img src="https://ibb.co/3YMDZQVn" alt="Logo" id="custom-logo-img" />';
+      document.body.insertBefore(header, document.body.firstChild);
+      setTimeout(()=>{ header.style.opacity = 1; }, 50);
+    } else {
+      document.getElementById('custom-logo-header').style.opacity = 1;
+    }
+
+    // Inject rules block under the first file input (upload)
+    setTimeout(()=> {
+      try {
+        const fileInput = document.querySelector('input[type=file]');
+        if(fileInput){
+          let container = fileInput.closest('div');
+          if(!container){ container = fileInput.parentElement; }
+          const rules = document.createElement('div');
+          rules.className = 'custom-rules';
+          rules.innerHTML = `
+            <div class="title"><strong>Your avatar starts with the right photo</strong><br><small>Here are some quick tips to nail it ✨</small></div>
+            <ul>
+              <li><strong>Full Body Shot</strong><div>Show your complete outfit from head to toe for accurate style analysis.</div></li>
+              <li><strong>Plain Background</strong><div>Use a simple, uncluttered background to help our AI focus on your style.</div></li>
+              <li><strong>Good Lighting</strong><div>Natural light works best – avoid shadows and dark areas for clearer photos.</div></li>
+            </ul>
+          `;
+          if(container.nextSibling){ container.parentNode.insertBefore(rules, container.nextSibling); } else { container.parentNode.appendChild(rules); }
+        }
+      } catch(e){}
+    }, 200);
+  }
+
+  function fadeAudioIn(audio, duration){
+    if(!audio) return;
+    let step = 50;
+    let steps = Math.max(1, Math.floor(duration/step));
+    let inc = 1.0/steps;
+    audio.volume = 0;
+    let i=0;
+    let t = setInterval(()=>{ i++; audio.volume = Math.min(1, audio.volume + inc); if(i>=steps){ clearInterval(t); } }, step);
+  }
+  function fadeAudioOut(audio, duration){
+    if(!audio) return;
+    let step = 50;
+    let steps = Math.max(1, Math.floor(duration/step));
+    let dec = (audio.volume||1)/steps;
+    let i=0;
+    let t = setInterval(()=>{ i++; audio.volume = Math.max(0, audio.volume - dec); if(i>=steps){ audio.pause(); clearInterval(t); } }, step);
+  }
+
+})();
+</script>
+"""
+
+# Render the intro HTML once on first run so it overlays the app during load.
+if not st.session_state.get('_st_intro_shown', False):
+    try:
+        components_html(_intro_html, height=160)
+    except Exception:
+        # Fallback to markdown if components fails
+        st.markdown(_intro_html, unsafe_allow_html=True)
+    st.session_state['_st_intro_shown'] = True
+else:
+    # Ensure the main app still receives the new styling when intro already shown
+    try:
+        # Extract CSS part to inject only the styles quickly
+        css_part = _intro_html.split("<style>",1)[1].split("</style>",1)[0]
+        components_html(f"<style>{css_part}</style>", height=1)
+    except Exception:
+        pass
+
+# --- END: StyleTeller UI Enhancements ---
+
+
+# --- ORIGINAL APP CODE (unchanged) ---
+
 import streamlit as st
 from PIL import Image
 import requests
