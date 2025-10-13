@@ -360,7 +360,7 @@ except Exception:
 
 # Insert top-center logo (will fade in with page)
 try:
-    st.markdown('<div class="logo-container"><img src="logo.png" alt="Logo"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="logo-container"><img src="https://i.ibb.co/3YMDZQVn/logo.png" alt="Style Teller Logo"></div>', unsafe_allow_html=True)
 except Exception:
     pass
 
