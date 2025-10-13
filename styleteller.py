@@ -1102,26 +1102,14 @@ st.set_page_config(page_title="Style Teller", page_icon="👗", layout="wide")
 # --- Inject custom CSS for centering logo and fixing layout ---
 st.markdown("""
     <style>
-    body {
-        background-color: #0b0e11;
+    /* ... existing styles like body, stAppViewContainer, etc. ... */
+    
+    /* --- CRITICAL FIX: Force-hide the persistent intro overlay across all pages --- */
+    #intro-overlay {
+        display: none !important; 
     }
-    [data-testid="stAppViewContainer"] {
-        background-color: #0b0e11;
-    }
-    .logo-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
-    }
-    .logo-container img {
-        height: 80px;
-    }
-    iframe, video {
-        display: block;
-        margin: auto;
-    }
+    
+    /* ... existing styles like .logo-container, etc. ... */
     </style>
 """, unsafe_allow_html=True)
 
