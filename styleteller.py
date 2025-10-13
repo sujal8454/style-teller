@@ -120,7 +120,7 @@ input, textarea, select { color: #000000 !important; background-color: #FFFFFF !
     if(!document.getElementById('custom-logo-header')){
       const header = document.createElement('div');
       header.id = 'custom-logo-header';
-      header.innerHTML = '<img src="https://ibb.co/3YMDZQVn" alt="Logo" id="custom-logo-img" />';
+      header.innerHTML = '<img src="logo.png" alt="Logo" id="custom-logo-img" />';
       document.body.insertBefore(header, document.body.firstChild);
       setTimeout(()=>{ header.style.opacity = 1; }, 50);
     } else {
