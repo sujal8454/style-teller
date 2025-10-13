@@ -120,7 +120,7 @@ input, textarea, select { color: #000000 !important; background-color: #FFFFFF !
     if(!document.getElementById('custom-logo-header')){
       const header = document.createElement('div');
       header.id = 'custom-logo-header';
-      header.innerHTML = '<img src="logo.png" alt="Logo" id="custom-logo-img" />';
+      header.innerHTML = '<img src="https://ibb.co/3YMDZQVn" alt="Logo" id="custom-logo-img" />';
       document.body.insertBefore(header, document.body.firstChild);
       setTimeout(()=>{ header.style.opacity = 1; }, 50);
     } else {
@@ -1090,3 +1090,68 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# --- MERGED STYLE TELLER UI UPDATE ---
+import streamlit as st
+from streamlit.components.v1 import html
+
+# --- Page config ---
+st.set_page_config(page_title="Style Teller", page_icon="👗", layout="wide")
+
+# --- Inject custom CSS for centering logo and fixing layout ---
+st.markdown("""
+    <style>
+    body {
+        background-color: #0b0e11;
+    }
+    [data-testid="stAppViewContainer"] {
+        background-color: #0b0e11;
+    }
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+    .logo-container img {
+        height: 80px;
+    }
+    iframe, video {
+        display: block;
+        margin: auto;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- Logo Display (Top Center, visible on all screens) ---
+st.markdown(
+    '<div class="logo-container"><img src="logo.png" alt="Logo"></div>',
+    unsafe_allow_html=True
+)
+
+# --- MAIN CONTENT ---
+st.markdown("### Welcome to **Style Teller**")
+
+try:
+    # --- Example video section ---
+    st.video("intro.mp4")
+
+    # --- Example content or app logic ---
+    st.markdown("""
+        <div style='text-align:center; padding: 30px; color:white;'>
+            <h2>Discover Your Style with AI</h2>
+            <p>Upload your image and let Style Teller suggest fashion recommendations tailored to you.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+except Exception as e:
+    st.error(f"An error occurred while loading content: {e}")
+
+# --- Footer ---
+st.markdown("""
+    <div style='text-align:center; color: gray; margin-top: 50px;'>
+        Created by sujal8454
+    </div>
+""", unsafe_allow_html=True)
