@@ -1,5 +1,7 @@
 # --- START: StyleTeller UI Enhancements (intro, theme, logo, background, rules) ---
-
+import random
+import streamlit as st
+from streamlit.components.v1 import html as components_html
 _intro_html = r"""
 <style>
 /* Page fade-in */
@@ -199,9 +201,6 @@ import json
 import os
 import time
 import base64
-import random
-import streamlit as st
-from streamlit.components.v1 import html as components_html
 # ---- Page Load & Logo Styling ----
 # All fade-in CSS and logo placement code removed here
 page_fadein_css = """
