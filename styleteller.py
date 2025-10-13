@@ -1127,7 +1127,7 @@ st.markdown("""
 
 # --- Logo Display (Top Center, visible on all screens) ---
 st.markdown(
-   '<div class="logo-container"><img src="https://i.ibb.co/3YMDZQVn/logo.png" alt="Style Teller Logo"></div>'
+   '<div class="logo-container"><img src="https://i.ibb.co/3YMDZQVn/logo.png" alt="Style Teller Logo"></div>',
     unsafe_allow_html=True
 )
 
